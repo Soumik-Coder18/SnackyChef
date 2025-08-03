@@ -1,5 +1,5 @@
 import React from 'react';
-import { FiInstagram, FiFacebook, FiTwitter, FiMail, FiHeart } from 'react-icons/fi';
+import { FiInstagram, FiFacebook, FiTwitter, FiMail, FiHeart, FiLogIn, FiUserPlus } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 
 const Footer = () => {
@@ -56,47 +56,56 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold text-[#5C2C1E] mb-4">Quick Links</h4>
             <ul className="space-y-2 text-[#5C3D2E]">
-              <li><a href="#" className="hover:text-[#E07A5F] transition-colors">Home</a></li>
-              <li><a href="#" className="hover:text-[#E07A5F] transition-colors">Recipes</a></li>
-              <li><a href="#" className="hover:text-[#E07A5F] transition-colors">Categories</a></li>
-              <li><a href="#" className="hover:text-[#E07A5F] transition-colors">About Us</a></li>
+              <li><a href="/" className="hover:text-[#E07A5F] transition-colors">Home</a></li>
+              <li><a href="/recipes" className="hover:text-[#E07A5F] transition-colors">Recipes</a></li>
+              <li><a href="/categories" className="hover:text-[#E07A5F] transition-colors">Categories</a></li>
+              <li><a href="/about" className="hover:text-[#E07A5F] transition-colors">About Us</a></li>
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Contact - Updated to navigate to contact page */}
           <div>
             <h4 className="text-lg font-semibold text-[#5C2C1E] mb-4">Contact</h4>
             <ul className="space-y-2 text-[#5C3D2E]">
               <li className="flex items-center gap-2">
                 <FiMail className="text-[#E07A5F]" />
-                <a href="mailto:hello@snackychef.com" className="hover:text-[#E07A5F] transition-colors">
-                  hello@snackychef.com
+                <a href="/contact" className="hover:text-[#E07A5F] transition-colors">
+                  Contact Us
                 </a>
               </li>
-              <li>123 Culinary Street</li>
-              <li>Foodville, FC 12345</li>
+              <li className="flex items-center gap-2">
+                <span>123 Culinary Street</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <span>Foodville, FC 12345</span>
+              </li>
             </ul>
           </div>
 
-          {/* Newsletter */}
+          {/* Account Actions */}
           <div>
-            <h4 className="text-lg font-semibold text-[#5C2C1E] mb-4">Newsletter</h4>
-            <p className="text-[#5C3D2E] mb-3">
-              Get weekly recipe inspiration straight to your inbox
-            </p>
-            <form className="flex gap-2">
-              <input 
-                type="email" 
-                placeholder="Your email" 
-                className="flex-grow px-4 py-2 rounded-full border border-[#FFD6A5] focus:outline-none focus:ring-2 focus:ring-[#E07A5F] text-[#5C2C1E] placeholder-[#5C3D2E]/60"
-              />
-              <button 
-                type="submit" 
-                className="px-4 py-2 rounded-full bg-[#E07A5F] text-white hover:bg-[#D06A50] transition-colors"
+            <h4 className="text-lg font-semibold text-[#5C2C1E] mb-4">Join SnackyChef</h4>
+            <div className="space-y-3">
+              <motion.a
+                href="/signup"
+                whileHover={{ x: 5 }}
+                className="flex items-center gap-2 text-[#5C3D2E] hover:text-[#E07A5F] transition-colors"
               >
-                Join
-              </button>
-            </form>
+                <FiUserPlus className="text-[#E07A5F]" />
+                Create an account
+              </motion.a>
+              <motion.a
+                href="/login"
+                whileHover={{ x: 5 }}
+                className="flex items-center gap-2 text-[#5C3D2E] hover:text-[#E07A5F] transition-colors"
+              >
+                <FiLogIn className="text-[#E07A5F]" />
+                Sign in to your account
+              </motion.a>
+            </div>
+            <p className="mt-4 text-sm text-[#5C3D2E]">
+              Join our community to save recipes, create meal plans, and more!
+            </p>
           </div>
         </div>
 
