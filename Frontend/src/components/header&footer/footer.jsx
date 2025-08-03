@@ -106,9 +106,9 @@ const Footer = () => {
             &copy; {new Date().getFullYear()} SnackyChef. All rights reserved.
           </div>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-[#E07A5F] transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-[#E07A5F] transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-[#E07A5F] transition-colors">Cookies</a>
+            <a href="/privacy-policy" className="hover:text-[#E07A5F] transition-colors">Privacy Policy</a>
+            <a href="/terms-of-service" className="hover:text-[#E07A5F] transition-colors">Terms of Service</a>
+            <a href="/cookies" className="hover:text-[#E07A5F] transition-colors">Cookies</a>
           </div>
           <div className="mt-3 md:mt-0 flex items-center gap-1">
             Made with <FiHeart className="text-[#E07A5F]" /> in Foodville
