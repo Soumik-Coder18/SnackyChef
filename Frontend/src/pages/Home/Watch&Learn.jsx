@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { FiYoutube, FiClock, FiBookmark } from 'react-icons/fi';
-import { BASE_URL } from '../../api/mealdb';
+const BASE_URL = import.meta.env.VITE_MEALDB_BASE_URL;
 
 const fetchMealVideos = async () => {
   try {

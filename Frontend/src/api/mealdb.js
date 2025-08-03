@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://www.themealdb.com/api/json/v1/1';
+const BASE_URL = import.meta.env.VITE_MEALDB_BASE_URL;
 
 export const searchByName = async (name) => {
   const res = await fetch(`${BASE_URL}/search.php?s=${name}`);
@@ -47,5 +47,25 @@ export const listAreas = async () => {
 
 export const getRandomMeal = async () => {
   const res = await fetch(`${BASE_URL}/random.php`);
+  return res.json();
+};
+
+// Search meals by tag (manually filter tags from all meals)
+export const searchByTag = async (tag) => {
+  const res = await fetch(`${BASE_URL}/filter.php?tags=${tag}`);
+  return res.json();
+};
+
+// List all available tags (manually defined since API doesn't expose this directly)
+export const listTags = () => {
+  return [
+    "Beef", "Breakfast", "Chicken", "Dessert", "Goat", "Lamb", "Miscellaneous", 
+    "Pasta", "Pork", "Seafood", "Side", "Starter", "Vegan", "Vegetarian"
+  ];
+};
+
+// Lookup ingredient details (if required)
+export const lookupIngredientByName = async (ingredient) => {
+  const res = await fetch(`${BASE_URL}/search.php?i=${ingredient}`);
   return res.json();
 };
