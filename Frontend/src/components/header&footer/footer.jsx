@@ -14,7 +14,18 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           {/* Brand info */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold text-[#5C2C1E]">SnackyChef</h3>
+            <div className="flex items-center gap-2">
+              <svg width="40" height="40" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="30" fill="#FF7F50" stroke="#FFF7ED" strokeWidth="2"/>
+                <rect x="18" y="28" width="28" height="14" rx="3" fill="#FFF7ED" stroke="#FF7F50" strokeWidth="2"/>
+                <rect x="24" y="20" width="16" height="4" rx="2" fill="#FFF7ED"/>
+                <path d="M42 28L48 22" stroke="#FFF7ED" strokeWidth="2" strokeLinecap="round"/>
+                <path d="M22 28L16 22" stroke="#FFF7ED" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+              <h1 className="text-2xl font-bold tracking-tight font-['Poppins'] text-[#5C2C1E]">
+                Snacky<span className="text-[#FF7F50]">Chef</span>
+              </h1>
+            </div>
             <p className="text-[#5C3D2E]">
               Your culinary companion for discovering and creating delicious recipes.
             </p>
