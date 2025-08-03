@@ -9,6 +9,8 @@ import Contact from '../pages/Contact/Contact';
 import About from '../pages/Contact/About';
 import SignUp from '../pages/Register/SignUp';
 import Login from '../pages/Register/login';
+import Recipe from '../pages/Recipe/MainRecipePage';
+import ViewAllRecipe from '../pages/Recipe/ViewAll/ViewAllRecipe';
 
 function AppRouter() {
   return (
@@ -23,6 +25,8 @@ function AppRouter() {
         <Route path="/about" element={<About />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/recipe" element={<Recipe />} />
+        <Route path="/view-all" element={<ViewAllRecipe />} />
         {/* Add more routes here later */}
       </Routes>
     </Router>

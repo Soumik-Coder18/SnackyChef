@@ -72,14 +72,14 @@ function Header() {
         <nav className="mb-2 md:mb-0 hidden md:block">
           <ul className="flex gap-8 list-none text-base font-medium">
             <li><a href="/" className="hover:text-[#FF7F50] transition-colors">Home</a></li>
-            <li><a href="/recipes" className="hover:text-[#FF7F50] transition-colors">Recipes</a></li>
+            <li><a href="/recipe" className="hover:text-[#FF7F50] transition-colors">Recipes</a></li>
             <li><a href="/favorites" className="hover:text-[#FF7F50] transition-colors">Favorites</a></li>
             <li><a href="/about" className="hover:text-[#FF7F50] transition-colors">About</a></li>
           </ul>
         </nav>
         
-        {/* Search Bar (Desktop) */}
-        <div className="w-full md:w-1/3 flex justify-end">
+        {/* Search Bar (Desktop only) */}
+        <div className="w-full md:w-1/3 flex justify-end hidden md:flex">
           <div className="relative w-full max-w-xs">
             <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#5C2C1E]/70" />
             <input
