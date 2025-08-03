@@ -23,7 +23,7 @@ function Header() {
             : 'bg-white/30 backdrop-blur-sm border-[#FBE7C6] shadow-sm'
         }`}
       >
-        <div className="flex justify-between items-center w-full md:w-auto mb-2 md:mb-0">
+        <div className="flex justify-between items-center w-full md:w-auto md:mb-0">
           <div className="flex items-center gap-2">
             <span className="text-3xl">🍳</span>
             <h1 className="text-2xl font-semibold tracking-tight">SnackyChef</h1>
