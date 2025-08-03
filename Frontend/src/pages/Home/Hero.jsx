@@ -17,7 +17,6 @@ function Hero() {
       <div className="hidden md:block absolute top-1/4 right-20 text-5xl opacity-40 animate-float-delay">🧅</div>
       <div className="hidden md:block absolute bottom-1/3 left-1/4 text-6xl opacity-30 animate-float-delay-2">🥕</div>
       <div className="hidden md:block absolute bottom-20 right-1/3 text-4xl opacity-40 animate-float">🧄</div>
-      <div className="hidden md:block absolute top-1/2 left-1/5 text-5xl opacity-30 animate-float-delay">🍋</div>
 
       <div className="max-w-7xl mx-auto w-full flex flex-col md:flex-row items-center md:items-center z-10 relative">
         {/* Text content */}

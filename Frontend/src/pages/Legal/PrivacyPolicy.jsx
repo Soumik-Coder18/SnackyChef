@@ -1,8 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiShield, FiDatabase, FiSettings, FiUsers, FiKey, FiMail, FiChevronDown } from 'react-icons/fi';
 
 const PrivacyPolicy = () => {
+  const navigate = useNavigate();
   const [expandedSection, setExpandedSection] = React.useState(null);
   const [isHovering, setIsHovering] = React.useState(false);
 
@@ -261,7 +263,10 @@ const PrivacyPolicy = () => {
               <p className="text-[#3E2A20] mb-4">
                 Have questions about your privacy? Our dedicated team is here to help.
               </p>
-              <button className="px-6 py-3 rounded-full bg-gradient-to-r from-[#E07A5F] to-[#FF9E5E] text-white font-semibold hover:from-[#D06A50] hover:to-[#EE8E4E] transition-all shadow-md hover:shadow-lg">
+              <button
+                onClick={() => navigate('/contact')}
+                className="px-6 py-3 rounded-full bg-gradient-to-r from-[#E07A5F] to-[#FF9E5E] text-white font-semibold hover:from-[#D06A50] hover:to-[#EE8E4E] transition-all shadow-md hover:shadow-lg"
+              >
                 Contact Privacy Team
               </button>
             </div>

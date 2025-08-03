@@ -63,7 +63,7 @@ const CookiePolicy = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
-              className="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-[#FFD6A5] p-4 z-50"
+              className="fixed bottom-0 left-0 right-0 bg-[#FFF3E8] shadow-lg border-t border-[#FFD6A5] p-4 z-50"
             >
               <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="flex-1">
@@ -144,13 +144,13 @@ const CookiePolicy = () => {
         >
           <div className={`p-6 rounded-xl ${cookieTypes[activeTab].color} bg-opacity-30 mb-6`}>
             <div className="flex items-start gap-4">
-              <div className="p-3 bg-white rounded-lg shadow-sm">
+              <div className="p-3 bg-[#FFF3E8] rounded-lg shadow-sm">
                 {cookieTypes[activeTab].icon}
               </div>
               <div>
                 <h2 className="text-xl font-bold mb-2">{cookieTypes[activeTab].title}</h2>
                 <p className="mb-4">{cookieTypes[activeTab].description}</p>
-                <div className="bg-white/80 p-4 rounded-lg">
+                <div className="bg-[#FFF1E5] p-4 rounded-lg">
                   <h3 className="font-semibold mb-2">Examples:</h3>
                   <ul className="list-disc pl-5 space-y-1">
                     {cookieTypes[activeTab].examples.map((example, i) => (
@@ -189,7 +189,7 @@ const CookiePolicy = () => {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="bg-white/90 p-6 rounded-xl shadow-sm border border-[#FFD6A5]"
+            className="bg-[#FFF3E8] p-6 rounded-xl shadow-sm border border-[#FFD6A5]"
           >
             <h2 className="text-xl font-bold text-[#5C2C1E] mb-4 flex items-center gap-2">
               <FiSettings className="text-[#E07A5F]" /> Managing Cookies
@@ -217,7 +217,7 @@ const CookiePolicy = () => {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="bg-white/90 p-6 rounded-xl shadow-sm border border-[#FFD6A5]"
+            className="bg-[#FFF3E8] p-6 rounded-xl shadow-sm border border-[#FFD6A5]"
           >
             <h2 className="text-xl font-bold text-[#5C2C1E] mb-4 flex items-center gap-2">
               <FiChevronDown className="text-[#E07A5F]" /> Learn More
@@ -236,7 +236,7 @@ const CookiePolicy = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="bg-[#FFEFE5] p-6 rounded-xl text-center"
+          className="p-6 rounded-xl text-center"
         >
           <h3 className="text-xl font-semibold text-[#5C2C1E] mb-3">Ready to update your preferences?</h3>
           <div className="flex flex-wrap justify-center gap-4">

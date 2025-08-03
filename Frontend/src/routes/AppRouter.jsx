@@ -5,6 +5,10 @@ import PrivacyPolicy from '../pages/Legal/PrivacyPolicy';
 import TermsOfService from '../pages/Legal/TermsOfService';
 import Cookies from '../pages/Legal/Cookies';
 import FullPolicy from '../pages/Legal/FullPolicy';
+import Contact from '../pages/Contact/Contact';
+import About from '../pages/Contact/About';
+import SignUp from '../pages/Register/SignUp';
+import Login from '../pages/Register/login';
 
 function AppRouter() {
   return (
@@ -15,6 +19,10 @@ function AppRouter() {
         <Route path="/terms-of-service" element={<TermsOfService />} />
         <Route path="/cookies" element={<Cookies />} />
         <Route path="/full-policy" element={<FullPolicy />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
         {/* Add more routes here later */}
       </Routes>
     </Router>
