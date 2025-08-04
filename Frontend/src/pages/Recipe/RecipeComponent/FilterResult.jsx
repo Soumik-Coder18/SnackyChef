@@ -43,7 +43,7 @@ function FilterResult({ meals }) {
         transition={{ duration: 0.5 }}
         className="mb-12"
       >
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#2A1A0F]">
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#5c2d1e]">
           <span className="relative inline-block pb-2">
             Filtered Recipes
             <span className="absolute bottom-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#FF7F50] to-[#E07A5F] rounded-full"></span>

@@ -1,6 +1,7 @@
 import Loader from '../../components/Loader';
 import React from 'react';
 import { FiArrowRight } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 function FeaturedRecipe({ meals }) {
   if (!meals || meals.length === 0) {
@@ -13,7 +14,7 @@ function FeaturedRecipe({ meals }) {
     .slice(0, 3);
 
   return (
-    <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#FFF9F2] to-[#FFE8D9] overflow-hidden">
+    <section className="relative py-1 px-4 sm:px-6 lg:px-8  overflow-hidden">
       {/* Decorative elements */}
       <div className="absolute top-0 left-0 w-full h-full opacity-10">
         <div className="absolute top-20 left-10 w-32 h-32 rounded-full bg-[#FF7F50] mix-blend-multiply filter blur-xl"></div>
@@ -22,7 +23,7 @@ function FeaturedRecipe({ meals }) {
 
       <div className="relative max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-[#2A1A0F] mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-[#5c2d1e] mb-4">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#E07A5F] to-[#5C2C1E]">
               Featured Recipes
             </span>
@@ -34,8 +35,9 @@ function FeaturedRecipe({ meals }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {bestMeals.map((meal, index) => (
-            <div
+            <Link
               key={meal.idMeal}
+              to={`/recipe/${meal.idMeal}`}
               className="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
             >
               <div className="relative overflow-hidden h-64">
@@ -60,20 +62,17 @@ function FeaturedRecipe({ meals }) {
               
               <div className="p-5">
                 <div className="flex justify-between items-center">
-                  <a 
-                    href={`/recipe/${meal.idMeal}`}
-                    className="inline-flex items-center text-[#FF7F50] font-medium hover:text-[#E07A5F] transition-colors"
-                  >
+                  <span className="inline-flex items-center text-[#FF7F50] font-medium group-hover:text-[#E07A5F] transition-colors">
                     View Recipe
                     <FiArrowRight className="ml-2 transition-transform group-hover:translate-x-1" />
-                  </a>
+                  </span>
                   <span className="text-xs text-gray-400">30 min</span>
                 </div>
               </div>
               
               {/* Hover overlay */}
               <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            </div>
+            </Link>
           ))}
         </div>
 

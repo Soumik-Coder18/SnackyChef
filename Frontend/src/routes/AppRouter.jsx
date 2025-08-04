@@ -13,6 +13,7 @@ import Recipe from '../pages/Recipe/MainRecipePage';
 import ViewAllRecipe from '../pages/Recipe/ViewAll/ViewAllRecipe';
 import SearchResult from '../pages/Recipe/SearchResult';
 import HowItWorks from '../pages/Contact/HowItWorks'
+import RecipeDetails from '../pages/RecipeDetails/MainRecipeDetails';
 
 function AppRouter() {
   return (
@@ -28,6 +29,7 @@ function AppRouter() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/recipe" element={<Recipe />} />
+        <Route path="/recipe/:id" element={<RecipeDetails />} />
         <Route path="/view-all" element={<ViewAllRecipe />} />
         <Route path="/search" element={<SearchResult />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
