@@ -80,29 +80,33 @@ function Header() {
         
         {/* Search Bar (Desktop only) */}
         <div className="w-full md:w-1/3 flex justify-end hidden md:flex">
-          <div className="relative w-full max-w-xs">
+          <form action="/search" method="GET" className="relative w-full max-w-xs">
             <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#5C2C1E]/70" />
             <input
               type="text"
+              name="q"
               placeholder="Search recipes..."
               className="w-full pl-12 pr-4 py-2 rounded-full border border-[#FFD6A5] text-[#5C2C1E] bg-[#FFF2E2]/90 focus:outline-none focus:ring-2 focus:ring-[#FF7F50] placeholder-[#5C2C1E]/60"
             />
-          </div>
+            <input type="hidden" name="type" value="name" />
+          </form>
         </div>
       </div>
       
       {/* Mobile Search Dropdown */}
       {searchOpen && (
         <div className="md:hidden bg-[#FFF7ED] px-4 py-3 border-b border-[#FFD6A5] mt-2 rounded-lg shadow-sm">
-          <div className="relative">
+          <form action="/search" method="GET" className="relative">
             <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5C2C1E]/70" />
             <input
               type="text"
+              name="q"
               placeholder="Search recipes..."
               className="w-full pl-10 pr-4 py-2 rounded-full border border-[#FFD6A5] text-[#5C2C1E] bg-[#FFF2E2]/90 focus:outline-none focus:ring-2 focus:ring-[#FF7F50] placeholder-[#5C2C1E]/60"
               autoFocus
             />
-          </div>
+            <input type="hidden" name="type" value="name" />
+          </form>
         </div>
       )}
       

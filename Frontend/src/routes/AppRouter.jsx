@@ -11,6 +11,8 @@ import SignUp from '../pages/Register/SignUp';
 import Login from '../pages/Register/login';
 import Recipe from '../pages/Recipe/MainRecipePage';
 import ViewAllRecipe from '../pages/Recipe/ViewAll/ViewAllRecipe';
+import SearchResult from '../pages/Recipe/SearchResult';
+import HowItWorks from '../pages/Contact/HowItWorks'
 
 function AppRouter() {
   return (
@@ -27,6 +29,8 @@ function AppRouter() {
         <Route path="/login" element={<Login />} />
         <Route path="/recipe" element={<Recipe />} />
         <Route path="/view-all" element={<ViewAllRecipe />} />
+        <Route path="/search" element={<SearchResult />} />
+        <Route path="/how-it-works" element={<HowItWorks />} />
         {/* Add more routes here later */}
       </Routes>
     </Router>

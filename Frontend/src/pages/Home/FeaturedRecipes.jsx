@@ -1,32 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { searchByName } from '../../api/mealdb';
 import { FiClock, FiHeart, FiStar } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 
-const featured = [
-  {
-    title: 'Creamy Garlic Chicken',
-    image: 'https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg',
-    time: '35 mins',
-    rating: 4.8,
-    tags: ['Dinner', 'Comfort Food']
-  },
-  {
-    title: 'Beef Wellington',
-    image: 'https://www.themealdb.com/images/media/meals/vvpprx1487325699.jpg',
-    time: '2 hrs',
-    rating: 4.9,
-    tags: ['Special Occasion', 'Gourmet']
-  },
-  {
-    title: 'Vegetarian Lasagna',
-    image: 'https://www.themealdb.com/images/media/meals/wtsvxx1511296896.jpg',
-    time: '45 mins',
-    rating: 4.7,
-    tags: ['Vegetarian', 'Family Meal']
-  },
-];
-
 function FeaturedRecipes() {
+  const [featured, setFeatured] = useState([]);
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      const res = await searchByName('chicken'); // example keyword
+      if (res.meals) {
+        const selected = res.meals.slice(0, 3).map(meal => ({
+          title: meal.strMeal,
+          image: meal.strMealThumb,
+          time: '30 mins', // MealDB doesn't provide cook time, so this is a placeholder
+          rating: 4.5,     // Placeholder rating
+          tags: [meal.strCategory || 'General', meal.strArea || 'International']
+        }));
+        setFeatured(selected);
+      }
+    };
+    fetchFeatured();
+  }, []);
   return (
     <section className="relative bg-gradient-to-br from-[#FFF7ED] via-[#FDE6D6] to-[#FFD6A5] py-24 px-6 md:px-12 overflow-hidden">
       {/* Decorative elements */}
