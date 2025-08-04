@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { FiSearch, FiClock, FiHeart, FiStar } from 'react-icons/fi';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const IngredientSearch = () => {
   const [ingredient, setIngredient] = useState('');
+  const navigate = useNavigate();
   const popularIngredients = [
     { name: 'Tomato', emoji: '🍅', type: 'vegetable' },
     { name: 'Garlic', emoji: '🧄', type: 'vegetable' },
@@ -15,8 +17,13 @@ const IngredientSearch = () => {
 
   const handleSearch = () => {
     if (ingredient.trim()) {
-      alert(`Searching for recipes with: ${ingredient}`);
+      navigate(`/search?q=${ingredient.trim()}&type=name`);
     }
+  };
+
+  // For popular ingredient buttons: search by name (not ingredient) and route accordingly
+  const searchByName = (name) => {
+    setIngredient(name);
   };
 
   return (
@@ -81,7 +88,7 @@ const IngredientSearch = () => {
                   key={item.name}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setIngredient(item.name)}
+                  onClick={() => searchByName(item.name)}
                   className={`flex items-center px-4 py-2 rounded-full border text-[#5C2C1E] transition ${
                     item.type === 'vegetable' ? 'bg-[#FFF2E2] border-[#FFD6A5] hover:bg-[#FFE5CC]' :
                     item.type === 'protein' ? 'bg-[#FFE5E0] border-[#FFB8A5] hover:bg-[#FFD2C6]' :

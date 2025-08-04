@@ -41,7 +41,7 @@ function Hero() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
             <a
-              href="/recipes"
+              href="/recipe"
               className="inline-block bg-gradient-to-r from-[#E07A5F] to-[#FF9E5E] hover:from-[#D06A50] hover:to-[#EE8E4E] text-white px-6 py-3 rounded-full text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0"
             >
               Explore Recipes
@@ -58,11 +58,11 @@ function Hero() {
           <div className="mt-8 flex flex-wrap justify-center md:justify-start gap-6 text-sm">
             <div className="flex items-center bg-white/30 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm">
               <div className="w-3 h-3 bg-[#FF9E5E] rounded-full mr-2"></div>
-              <span>10,000+ Recipes</span>
+              <span>300+ Recipes</span>
             </div>
             <div className="flex items-center bg-white/30 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm">
               <div className="w-3 h-3 bg-[#E07A5F] rounded-full mr-2"></div>
-              <span>5-Minute Meals</span>
+              <span>30-Minute Meals</span>
             </div>
             <div className="flex items-center bg-white/30 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm">
               <div className="w-3 h-3 bg-[#A8442A] rounded-full mr-2"></div>
