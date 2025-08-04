@@ -56,7 +56,7 @@ const ViewAllRecipe = () => {
           transition={{ duration: 0.6 }}
           className="mb-12 mt-15"
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-[#2A1A0F] mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-[#5c2d1e] mb-4">
             <span className="relative inline-block pb-2">
               Explore All Recipes
               <span className="absolute bottom-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#FF7F50] to-[#E07A5F] rounded-full"></span>

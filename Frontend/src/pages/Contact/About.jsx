@@ -146,7 +146,7 @@ const About = () => {
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => navigate('/recipes')}
+                onClick={() => navigate('/recipe')}
                 className="px-8 py-3 border-2 border-[#5C2C1E] text-[#5C2C1E] rounded-full font-medium hover:bg-[#FFF7ED] transition"
               >
                 Explore Recipes

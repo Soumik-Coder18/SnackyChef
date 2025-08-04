@@ -66,7 +66,7 @@ const ViewAllCard = ({ meal }) => {
 
       <div className="p-5">
         <div className="flex justify-between items-start mb-2">
-          <h3 className="text-xl font-bold text-[#2A1A0F]">{details.strMeal}</h3>
+          <h3 className="text-xl font-bold text-[#5c2d1e]">{details.strMeal}</h3>
           <div className="flex items-center text-xs text-[#7B4B2A]">
             <FiClock className="mr-1" />
             {Math.floor(Math.random() * 45) + 15} min
@@ -87,7 +87,7 @@ const ViewAllCard = ({ meal }) => {
         </p>
 
         <Link
-          to={`/recipes/${details.idMeal}`}
+          to={`/recipe/${details.idMeal}`}
           className="inline-flex items-center text-[#FF7F50] font-medium hover:text-[#E07A5F] transition-colors group"
         >
           View Recipe

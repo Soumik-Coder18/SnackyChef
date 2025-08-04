@@ -46,7 +46,7 @@ const HowItWorks = () => {
           viewport={{ once: true }}
           className="text-center mb-16 mt-20"
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-[#2A1A0F] mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-[#5c2d1e] mb-4">
             <span className="relative inline-block">
               How SnackyChef Works
               <div className='mt-2'></div>
@@ -74,7 +74,7 @@ const HowItWorks = () => {
                 <div className={`flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r ${step.color} mb-6 text-white`}>
                   {step.icon}
                 </div>
-                <h3 className="text-xl font-bold text-[#2A1A0F] mb-3">{step.title}</h3>
+                <h3 className="text-xl font-bold text-[#5c2d1e] mb-3">{step.title}</h3>
                 <p className="text-[#7B4B2A]">{step.description}</p>
                 <div className="absolute -top-4 -left-4 w-8 h-8 flex items-center justify-center rounded-full bg-[#FF7F50] text-white font-bold text-sm">
                   {index + 1}
