@@ -31,7 +31,7 @@ function RecipeHeader({ meal }) {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-sm hover:bg-[#FF7F50] hover:text-white transition-colors"
-                onClick={() => console.log('Favorite clicked')}
+                onClick={() => console.log('Favourite clicked')}
               >
                 <FiHeart className="w-5 h-5 text-[#E07A5F]" />
               </motion.button>

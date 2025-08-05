@@ -3,7 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiClock, FiList, FiCheckCircle, FiPlay, FiPause, FiRotateCcw, FiAlertTriangle, FiChevronDown, FiChevronUp } from 'react-icons/fi';
-import notificationSound from '../../assets/animations/sound/notification.wav';
+import notificationSound from '../../assets/sound/notification.wav';
 
 function Instructions({ instructions }) {
   const [completedSteps, setCompletedSteps] = useState({});
@@ -84,15 +84,18 @@ function Instructions({ instructions }) {
 
   // Enhanced time phrase highlighting and timer detection
   const processStepText = (text) => {
+    // Remove "STEP X" patterns from the beginning
+    const cleanedText = text.replace(/^step\s*\d+[:\s]*/i, '').trim();
+    
     const timeRegex = /(\d+\s?(?:minutes?|mins?|hours?|hrs?|seconds?|secs?|days?|d|h|m|s))\b/gi;
     let lastIndex = 0;
     const elements = [];
     let match;
 
-    while ((match = timeRegex.exec(text)) !== null) {
+    while ((match = timeRegex.exec(cleanedText)) !== null) {
       // Text before the match
       if (match.index > lastIndex) {
-        elements.push(text.substring(lastIndex, match.index));
+        elements.push(cleanedText.substring(lastIndex, match.index));
       }
 
       // The time match
@@ -144,7 +147,7 @@ function Instructions({ instructions }) {
                     setActiveTimers(prev => ({ ...prev, [timerId]: false }));
                   }}
                   className="text-[#A0522D] hover:bg-[#FFE8DC] rounded-full p-1"
-                  >
+                >
                   <FiRotateCcw size={12} />
                 </button>
               </div>
@@ -163,8 +166,8 @@ function Instructions({ instructions }) {
     }
 
     // Add remaining text
-    if (lastIndex < text.length) {
-      elements.push(text.substring(lastIndex));
+    if (lastIndex < cleanedText.length) {
+      elements.push(cleanedText.substring(lastIndex));
     }
 
     return elements;
@@ -203,25 +206,28 @@ function Instructions({ instructions }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="mb-12 bg-white rounded-xl shadow-sm border border-[#FFD6A5]/30 overflow-hidden"
+      className="mb-12 bg-white rounded-xl shadow-lg border border-[#FFD6A5]/30 overflow-hidden"
     >
       <div className="bg-[#FFF7ED] p-6 border-b border-[#FFD6A5]/30">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#2A1A0F] flex items-center gap-3">
-            <span className="p-2 bg-[#FFD6A5] rounded-full">
-              <FiList className="text-[#5C2C1E]" />
-            </span>
-            Cooking Instructions
-          </h2>
-          <div className="flex items-center gap-2 text-sm text-[#7B4B2A] bg-[#FFD6A5]/30 px-3 py-1 rounded-full">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-[#FFD6A5] rounded-xl">
+              <FiList className="text-[#5C2C1E] text-xl" />
+            </div>
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold text-[#2A1A0F]">Cooking Instructions</h2>
+              <p className="text-[#7B4B2A] text-sm">Follow these steps to prepare your meal</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-[#7B4B2A] bg-[#FFD6A5]/30 px-4 py-2 rounded-full">
             <FiClock className="text-[#E07A5F]" />
             <span>~{Math.floor(steps.length * 1.5)} mins</span>
           </div>
         </div>
 
-        <div className="mt-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="h-2 bg-[#FFD6A5]/30 rounded-full flex-1 min-w-[100px]">
+        <div className="mt-6 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="h-3 w-full bg-[#FFD6A5]/30 rounded-full flex-1 min-w-[120px] max-w-[200px]">
               <motion.div 
                 className="h-full bg-[#E07A5F] rounded-full"
                 initial={{ width: 0 }}
@@ -230,7 +236,7 @@ function Instructions({ instructions }) {
               />
             </div>
             <span className="text-sm font-medium text-[#5C2C1E]">
-              {completedCount}/{steps.length}
+              {completedCount}/{steps.length} completed
             </span>
           </div>
           {completedCount > 0 && (
@@ -244,17 +250,21 @@ function Instructions({ instructions }) {
         </div>
       </div>
 
-      <div className="p-4 bg-yellow-50 border-b border-yellow-100 flex items-start gap-2">
+      <div className="p-4 bg-yellow-50 border-b border-yellow-100 flex items-start gap-3">
         <FiAlertTriangle className="text-yellow-500 mt-0.5 flex-shrink-0" />
-        <p className="text-sm text-yellow-800">
-          <span className="font-medium">Tip:</span> Click time phrases to set timers. Steps with long content can be expanded.
-        </p>
+        <div>
+          <p className="text-sm font-medium text-yellow-800 mb-1">Quick Tips</p>
+          <p className="text-xs text-yellow-700">
+            • Click time phrases to set timers • Long steps can be expanded • Check off completed steps
+          </p>
+        </div>
       </div>
 
-      <ol className="divide-y divide-[#FFD6A5]/30">
+      <ol className="divide-y divide-[#FFD6A5]/20">
         {steps.map((step, idx) => {
           const isLongStep = step.length > 120;
           const isExpanded = expandedSteps[idx] || !isLongStep;
+          const hasOvenAlert = step.toLowerCase().includes('preheat');
           
           return (
             <motion.li
@@ -262,33 +272,26 @@ function Instructions({ instructions }) {
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: idx * 0.05 }}
-              className={`group ${completedSteps[idx] ? 'bg-[#FFF7ED]/50' : 'bg-white'}`}
+              className={`group ${completedSteps[idx] ? 'bg-[#FFF7ED]/30' : 'bg-white'}`}
             >
-              <div className="p-4">
-                <div className="flex items-start gap-3">
+              <div className="p-5">
+                <div className="flex items-start gap-4">
                   <button
                     onClick={() => toggleStepCompletion(idx)}
-                    className={`flex-shrink-0 w-6 h-6 mt-0.5 rounded-full border flex items-center justify-center transition-colors ${
+                    className={`flex-shrink-0 w-7 h-7 mt-0.5 rounded-full border-2 flex items-center justify-center transition-colors ${
                       completedSteps[idx]
                         ? 'bg-[#E07A5F] border-[#E07A5F] text-white'
-                        : 'border-[#FFD6A5] text-transparent group-hover:text-[#FFD6A5]'
+                        : 'border-[#FFD6A5] text-transparent group-hover:text-[#FFD6A5] hover:bg-[#FFD6A5]/20'
                     }`}
                   >
-                    <FiCheckCircle size={14} />
+                    <FiCheckCircle size={16} />
                   </button>
                   <div className="flex-1 min-w-0">
                     <div 
-                      className={`flex flex-wrap items-baseline gap-1 cursor-pointer ${
-                        completedSteps[idx] ? 'opacity-75' : 'opacity-100'
-                      }`}
+                      className={`cursor-pointer ${completedSteps[idx] ? 'opacity-80' : 'opacity-100'}`}
                       onClick={() => isLongStep && toggleStepExpansion(idx)}
                     >
-                      <span className={`font-bold ${
-                        completedSteps[idx] ? 'text-[#7B4B2A]' : 'text-[#5C2C1E]'
-                      }`}>
-                        {idx + 1}.
-                      </span>
-                      <div className={`${
+                      <div className={`flex flex-wrap items-baseline gap-1 ${
                         completedSteps[idx] ? 'text-[#7B4B2A]' : 'text-[#3E2A20]'
                       } ${completedSteps[idx] ? 'line-through' : ''}`}>
                         {isExpanded ? (
@@ -311,22 +314,23 @@ function Instructions({ instructions }) {
                       </div>
                     </div>
 
-                    {step.toLowerCase().includes('preheat') && (
-                      <div className="mt-2 inline-flex items-center px-2 py-1 bg-red-50 text-red-700 text-xs rounded-full">
-                        <FiAlertTriangle className="mr-1" size={12} />
-                        Oven Alert
-                      </div>
-                    )}
-
-                    {isLongStep && isExpanded && (
-                      <button 
-                        className="mt-2 text-xs text-[#E07A5F] hover:underline flex items-center gap-1"
-                        onClick={() => toggleStepExpansion(idx)}
-                      >
-                        <FiChevronUp size={12} />
-                        Show less
-                      </button>
-                    )}
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {hasOvenAlert && (
+                        <span className="inline-flex items-center px-3 py-1 bg-red-50 text-red-700 text-xs rounded-full">
+                          <FiAlertTriangle className="mr-1" size={12} />
+                          Oven Alert
+                        </span>
+                      )}
+                      {isLongStep && isExpanded && (
+                        <button 
+                          className="inline-flex items-center text-xs text-[#E07A5F] hover:underline"
+                          onClick={() => toggleStepExpansion(idx)}
+                        >
+                          <FiChevronUp size={14} className="mr-1" />
+                          Show less
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

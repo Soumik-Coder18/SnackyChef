@@ -73,7 +73,7 @@ function Header() {
           <ul className="flex gap-8 list-none text-base font-medium">
             <li><a href="/" className="hover:text-[#FF7F50] transition-colors">Home</a></li>
             <li><a href="/recipe" className="hover:text-[#FF7F50] transition-colors">Recipes</a></li>
-            <li><a href="/favorites" className="hover:text-[#FF7F50] transition-colors">Favorites</a></li>
+            <li><a href="/favourite" className="hover:text-[#FF7F50] transition-colors">Favourites</a></li>
             <li><a href="/about" className="hover:text-[#FF7F50] transition-colors">About</a></li>
           </ul>
         </nav>
@@ -116,7 +116,7 @@ function Header() {
           <ul className="flex flex-col gap-4 text-base font-medium">
             <li><a href="/" onClick={() => setMobileMenuOpen(false)} className="block py-2 hover:text-[#FF7F50] transition-colors">Home</a></li>
             <li><a href="/recipes" onClick={() => setMobileMenuOpen(false)} className="block py-2 hover:text-[#FF7F50] transition-colors">Recipes</a></li>
-            <li><a href="/favorites" onClick={() => setMobileMenuOpen(false)} className="block py-2 hover:text-[#FF7F50] transition-colors">Favorites</a></li>
+            <li><a href="/favourite" onClick={() => setMobileMenuOpen(false)} className="block py-2 hover:text-[#FF7F50] transition-colors">Favourites</a></li>
             <li><a href="/about" onClick={() => setMobileMenuOpen(false)} className="block py-2 hover:text-[#FF7F50] transition-colors">About</a></li>
           </ul>
         </div>

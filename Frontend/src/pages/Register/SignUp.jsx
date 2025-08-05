@@ -227,7 +227,7 @@ const SignUp = () => {
               <h3 className="text-xl font-semibold mb-2 text-[#5C2C1E]">Why Join SnackyChef?</h3>
               <ul className="space-y-2 text-[#7B341E]">
                 <li className="flex items-center justify-center gap-2">
-                  <span className="text-[#E07A5F]">✓</span> Save your favorite recipes
+                  <span className="text-[#E07A5F]">✓</span> Save your Favourite recipes
                 </li>
                 <li className="flex items-center justify-center gap-2">
                   <span className="text-[#E07A5F]">✓</span> Get personalized recommendations

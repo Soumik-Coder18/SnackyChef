@@ -24,8 +24,8 @@ const HowItWorks = () => {
     },
     {
       icon: <FiHeart className="w-8 h-8" />,
-      title: "Save Favorites",
-      description: "Create collections of your favorite recipes for easy access anytime.",
+      title: "Save Favourites",
+      description: "Create collections of your Favourite recipes for easy access anytime.",
       color: "from-[#D4A373] to-[#FFD6A5]"
     },
     {

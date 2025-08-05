@@ -37,7 +37,7 @@ const CookiePolicy = () => {
       examples: [
         "Language and region preferences",
         "Font size and display options",
-        "Favorite recipe categories"
+        "Favourite recipe categories"
       ],
       color: "bg-[#F7F0E6] text-[#A67C52]"
     }
