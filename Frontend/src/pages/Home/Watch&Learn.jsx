@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { FiYoutube, FiClock, FiBookmark } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 const BASE_URL = import.meta.env.VITE_MEALDB_BASE_URL;
 
 const fetchMealVideos = async () => {
@@ -159,9 +160,12 @@ function WatchAndLearn() {
           transition={{ delay: 0.4 }}
           className="text-center mt-16"
         >
-          <button className="px-8 py-4 rounded-full bg-gradient-to-r from-[#E07A5F] to-[#FF9E5E] text-white font-semibold hover:from-[#D06A50] hover:to-[#EE8E4E] transition-all shadow-lg hover:shadow-xl">
+          <Link
+            to="/recipe"
+            className="inline-block px-8 py-4 rounded-full bg-gradient-to-r from-[#E07A5F] to-[#FF9E5E] text-white font-semibold hover:from-[#D06A50] hover:to-[#EE8E4E] transition-all shadow-lg hover:shadow-xl"
+          >
             Browse All Tutorials
-          </button>
+          </Link>
         </motion.div>
       </div>
     </section>

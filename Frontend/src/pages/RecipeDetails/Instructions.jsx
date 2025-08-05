@@ -3,7 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiClock, FiList, FiCheckCircle, FiPlay, FiPause, FiRotateCcw, FiAlertTriangle, FiChevronDown, FiChevronUp } from 'react-icons/fi';
-import notificationSound from '../../assets/animations/sound/notification.wav';
+import notificationSound from '../../assets/sound/notification.wav';
 
 function Instructions({ instructions }) {
   const [completedSteps, setCompletedSteps] = useState({});

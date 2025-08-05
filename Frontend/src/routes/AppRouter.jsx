@@ -15,6 +15,8 @@ import SearchResult from '../pages/Recipe/SearchResult';
 import HowItWorks from '../pages/Contact/HowItWorks'
 import RecipeDetails from '../pages/RecipeDetails/MainRecipeDetails';
 import Favourite from '../pages/Favourites/Favourite';
+// Needs to protectedroute
+import CreateRecipe from '../SocialPages/UserRecipes/CreateRecipe';
 
 function AppRouter() {
   return (
@@ -35,6 +37,8 @@ function AppRouter() {
         <Route path="/search" element={<SearchResult />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/favourite" element={<Favourite />} />
+        {/* Protected route will implemented later */}
+        <Route path="/create-recipe" element={<CreateRecipe />} />
         {/* Add more routes here later */}
       </Routes>
     </Router>
