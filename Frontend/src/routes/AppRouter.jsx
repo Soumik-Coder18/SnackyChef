@@ -14,6 +14,7 @@ import ViewAllRecipe from '../pages/Recipe/ViewAll/ViewAllRecipe';
 import SearchResult from '../pages/Recipe/SearchResult';
 import HowItWorks from '../pages/Contact/HowItWorks'
 import RecipeDetails from '../pages/RecipeDetails/MainRecipeDetails';
+import Favourite from '../pages/Favourites/Favourite';
 
 function AppRouter() {
   return (
@@ -33,6 +34,7 @@ function AppRouter() {
         <Route path="/view-all" element={<ViewAllRecipe />} />
         <Route path="/search" element={<SearchResult />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
+        <Route path="/favourite" element={<Favourite />} />
         {/* Add more routes here later */}
       </Routes>
     </Router>

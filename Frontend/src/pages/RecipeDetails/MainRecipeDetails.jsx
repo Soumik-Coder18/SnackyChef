@@ -9,7 +9,6 @@ import IngredientsList from './IngredientsList';
 import Instructions from './Instructions';
 import InstructionalVideo from './InstructionalVideo';
 import { motion } from 'framer-motion';
-import { FiClock, FiUsers, FiBarChart2 } from 'react-icons/fi';
 
 function MainRecipeDetails() {
   const { id } = useParams();
@@ -17,47 +16,47 @@ function MainRecipeDetails() {
   const [loading, setLoading] = useState(true);
   const [similar, setSimilar] = useState([]);
   const [nutritionData, setNutritionData] = useState([]);
-  const [activeTab, setActiveTab] = useState('instructions');
+  const [activeTab, setActiveTab] = useState('ingredients');
 
   useEffect(() => {
-    async function fetchMeal() {
-      setLoading(true);
-      try {
-        const data = await getMealById(id);
-        if (data?.meals?.[0]) {
-          const meal = data.meals[0];
-          setMeal(meal);
+  window.scrollTo(0, 0); // Scroll to top on mount
 
-          // Fetch similar meals
-          const similarCategory = await filterByCategory(meal.strCategory);
-          setSimilar(similarCategory?.meals?.filter((m) => m.idMeal !== id).slice(0, 6) || []);
+  async function fetchMeal() {
+    setLoading(true);
+    try {
+      const data = await getMealById(id);
+      if (data?.meals?.[0]) {
+        const meal = data.meals[0];
+        setMeal(meal);
 
-          // Prepare nutrition data
-          const ingredients = [];
-          for (let i = 1; i <= 20; i++) {
-            const ing = meal[`strIngredient${i}`];
-            const measure = meal[`strMeasure${i}`];
-            if (ing) ingredients.push({ ingredient: ing, measure });
-          }
+        const similarCategory = await filterByCategory(meal.strCategory);
+        setSimilar(similarCategory?.meals?.filter((m) => m.idMeal !== id).slice(0, 6) || []);
 
-          const simulated = ingredients.map((item) => ({
-            ingredient: item.ingredient,
-            calories: Math.floor(Math.random() * 100 + 50),
-            protein: Math.floor(Math.random() * 10 + 2),
-            fat: Math.floor(Math.random() * 10 + 1),
-            carbs: Math.floor(Math.random() * 15 + 5),
-          }));
-          setNutritionData(simulated);
+        const ingredients = [];
+        for (let i = 1; i <= 20; i++) {
+          const ing = meal[`strIngredient${i}`];
+          const measure = meal[`strMeasure${i}`];
+          if (ing) ingredients.push({ ingredient: ing, measure });
         }
-      } catch (error) {
-        console.error("Error fetching meal:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
 
-    fetchMeal();
-  }, [id]);
+        const simulated = ingredients.map((item) => ({
+          ingredient: item.ingredient,
+          calories: Math.floor(Math.random() * 100 + 50),
+          protein: Math.floor(Math.random() * 10 + 2),
+          fat: Math.floor(Math.random() * 10 + 1),
+          carbs: Math.floor(Math.random() * 15 + 5),
+        }));
+        setNutritionData(simulated);
+      }
+    } catch (error) {
+      console.error("Error fetching meal:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  fetchMeal();
+}, [id]);
 
   if (loading) return <Loader />;
   if (!meal) return (
@@ -72,28 +71,10 @@ function MainRecipeDetails() {
       {/* Recipe Header */}
       <RecipeHeader meal={meal} />
 
-      {/* Meta Information */}
-      <div className="flex flex-wrap gap-4 mt-6 mb-8">
-        <div className="flex items-center bg-[#FFF7ED] px-4 py-2 rounded-full">
-          <FiClock className="text-[#E07A5F] mr-2" />
-          <span className="text-sm font-medium text-[#5C2C1E]">Prep: {Math.floor(Math.random() * 30 + 10)} mins</span>
-        </div>
-        <div className="flex items-center bg-[#FFF7ED] px-4 py-2 rounded-full">
-          <FiUsers className="text-[#E07A5F] mr-2" />
-          <span className="text-sm font-medium text-[#5C2C1E]">Serves: {Math.floor(Math.random() * 6 + 2)}</span>
-        </div>
-        <div className="flex items-center bg-[#FFF7ED] px-4 py-2 rounded-full">
-          <FiBarChart2 className="text-[#E07A5F] mr-2" />
-          <span className="text-sm font-medium text-[#5C2C1E]">
-            Difficulty: {['Easy', 'Medium', 'Hard'][Math.floor(Math.random() * 3)]}
-          </span>
-        </div>
-      </div>
-
       {/* Content Tabs */}
       <div className="border-b border-[#FFD6A5] mb-8">
         <nav className="-mb-px flex space-x-8">
-          {['instructions', 'ingredients', 'nutrition', 'video'].map((tab) => (
+          {['ingredients', 'instructions', 'nutrition', 'video'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -117,8 +98,8 @@ function MainRecipeDetails() {
         transition={{ duration: 0.3 }}
         className="mb-12"
       >
-        {activeTab === 'instructions' && <Instructions instructions={meal.strInstructions} />}
         {activeTab === 'ingredients' && <IngredientsList meal={meal} />}
+        {activeTab === 'instructions' && <Instructions instructions={meal.strInstructions} />}
         {activeTab === 'nutrition' && <NutritionInfo nutritionData={nutritionData} />}
         {activeTab === 'video' && <InstructionalVideo youtubeUrl={meal.strYoutube} />}
       </motion.div>
@@ -126,7 +107,6 @@ function MainRecipeDetails() {
       {/* Similar Recipes */}
       {similar.length > 0 && (
         <div className="mt-12 border-t border-[#FFD6A5] pt-12">
-          <h3 className="text-2xl font-bold text-[#5C2C1E] mb-6">You Might Also Like</h3>
           <SimilarRecipes similarRecipes={similar} />
         </div>
       )}

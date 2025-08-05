@@ -10,6 +10,16 @@ function SimilarRecipes() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const fetchFullMealDetails = async (meals) => {
+      const detailed = await Promise.all(
+        meals.map(async (meal) => {
+          const fullData = await getMealById(meal.idMeal);
+          return fullData?.meals?.[0] || null;
+        })
+      );
+      return detailed.filter(Boolean);
+    };
+
     const fetchSimilar = async () => {
       setIsLoading(true);
       try {
@@ -33,7 +43,8 @@ function SimilarRecipes() {
           r.idMeal !== id && idx === self.findIndex(x => x.idMeal === r.idMeal)
         );
 
-        setSimilarRecipes(uniqueRecipes.slice(0, 6));
+        const detailedRecipes = await fetchFullMealDetails(uniqueRecipes.slice(0, 6));
+        setSimilarRecipes(detailedRecipes);
       } catch (error) {
         console.error("Error fetching similar recipes:", error);
       } finally {

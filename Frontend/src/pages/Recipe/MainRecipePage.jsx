@@ -71,18 +71,25 @@ import AllRecipes from './AllRecipes';
 import QuickRecipe from './QuickRecipe';
 import FilterResult from './RecipeComponent/FilterResult';
 import { motion } from 'framer-motion';
+import Loader from '../../components/Loader';
 
 function MainRecipePage() {
   const [filteredMeals, setFilteredMeals] = useState([]);
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [allMeals, setAllMeals] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
   const mealsPerPage = 9;
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await searchByName('');
-      if (data.meals) setAllMeals(data.meals);
+      setLoading(true);
+      try {
+        const data = await searchByName('');
+        if (data.meals) setAllMeals(data.meals);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchData();
   }, []);
@@ -96,6 +103,8 @@ function MainRecipePage() {
   const indexOfLastMeal = currentPage * mealsPerPage;
   const indexOfFirstMeal = indexOfLastMeal - mealsPerPage;
   const currentMeals = allMeals.slice(indexOfFirstMeal, indexOfLastMeal);
+
+  if (loading) return <Loader />;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#FFF7ED] to-[#FFE8D6]">

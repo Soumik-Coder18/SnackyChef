@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { FiCheck, FiShoppingBag, FiEdit2, FiDivide, FiX } from 'react-icons/fi';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiCheck, FiShoppingBag, FiEdit2, FiX, FiPlus, FiMinus } from 'react-icons/fi';
 
 function IngredientsList({ meal }) {
   const [ingredients, setIngredients] = useState([]);
@@ -9,6 +9,7 @@ function IngredientsList({ meal }) {
   const [editingId, setEditingId] = useState(null);
   const [scaleFactor, setScaleFactor] = useState(1);
   const [originalQuantities, setOriginalQuantities] = useState({});
+  const inputRef = useRef(null);
 
   // Parse ingredients on component mount
   useEffect(() => {
@@ -34,28 +35,27 @@ function IngredientsList({ meal }) {
     setOriginalQuantities(quantities);
   }, [meal]);
 
+  // Focus input when editing
+  useEffect(() => {
+    if (editingId && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [editingId]);
+
   // Update all quantities when scale factor changes
   useEffect(() => {
-    if (scaleFactor !== 1) {
-      setIngredients(prev =>
-        prev.map(item => ({
-          ...item,
-          currentMeasure: scaleQuantity(item.originalMeasure, scaleFactor)
-        }))
-      );
-    } else {
-      setIngredients(prev =>
-        prev.map(item => ({
-          ...item,
-          currentMeasure: item.originalMeasure
-        }))
-      );
-    }
+    setIngredients(prev =>
+      prev.map(item => ({
+        ...item,
+        currentMeasure: scaleQuantity(item.originalMeasure, scaleFactor)
+      }))
+    );
   }, [scaleFactor]);
 
   // Helper function to scale quantities
   const scaleQuantity = (measure, factor) => {
-    if (!measure) return '';
+    if (!measure || factor === 1) return measure;
     
     // Extract numeric value and unit
     const match = measure.match(/^(\d*\.?\d+)\s*([^\d]*)$/);
@@ -76,17 +76,24 @@ function IngredientsList({ meal }) {
     setIngredients(prev => prev.map(item => 
       item.id === id ? { ...item, currentMeasure: newMeasure } : item
     ));
-    
-    // Calculate new scale factor based on this change
-    const originalQty = originalQuantities[id];
-    const newQty = newMeasure;
-    
-    if (originalQty && newQty) {
-      const originalValue = parseFloat(originalQty.match(/^\d*\.?\d+/)?.[0] || 1);
-      const newValue = parseFloat(newQty.match(/^\d*\.?\d+/)?.[0] || 1);
+  };
+
+  // Save edit and exit editing mode
+  const saveEdit = (id) => {
+    setEditingId(null);
+    // Recalculate scale factor based on this change
+    const editedItem = ingredients.find(item => item.id === id);
+    if (editedItem) {
+      const originalQty = originalQuantities[id];
+      const newQty = editedItem.currentMeasure;
       
-      if (originalValue > 0) {
-        setScaleFactor(newValue / originalValue);
+      if (originalQty && newQty) {
+        const originalValue = parseFloat(originalQty.match(/^\d*\.?\d+/)?.[0] || 1);
+        const newValue = parseFloat(newQty.match(/^\d*\.?\d+/)?.[0] || 1);
+        
+        if (originalValue > 0) {
+          setScaleFactor(newValue / originalValue);
+        }
       }
     }
   };
@@ -118,24 +125,23 @@ function IngredientsList({ meal }) {
           </h2>
           
           {ingredients.length > 0 && (
-            <div className="flex items-center gap-2 bg-[#FFF7ED] px-3 py-1 rounded-full">
+            <div className="flex items-center bg-[#FFF7ED] rounded-full overflow-hidden border border-[#FFD6A5]">
               <button 
-                onClick={() => setScaleFactor(0.5)}
-                className={`px-2 ${scaleFactor === 0.5 ? 'text-[#E07A5F] font-bold' : 'text-[#7B4B2A]'}`}
+                onClick={() => setScaleFactor(Math.max(0.25, scaleFactor - 0.25))}
+                className="px-3 py-1 text-[#7B4B2A] hover:bg-[#FFD6A5]/30"
+                aria-label="Decrease quantity"
               >
-                ½
+                <FiMinus size={14} />
               </button>
+              <span className="px-2 text-sm font-medium text-[#5C2C1E]">
+                {scaleFactor}x
+              </span>
               <button 
-                onClick={() => setScaleFactor(1)}
-                className={`px-2 ${scaleFactor === 1 ? 'text-[#E07A5F] font-bold' : 'text-[#7B4B2A]'}`}
+                onClick={() => setScaleFactor(scaleFactor + 0.25)}
+                className="px-3 py-1 text-[#7B4B2A] hover:bg-[#FFD6A5]/30"
+                aria-label="Increase quantity"
               >
-                1×
-              </button>
-              <button 
-                onClick={() => setScaleFactor(2)}
-                className={`px-2 ${scaleFactor === 2 ? 'text-[#E07A5F] font-bold' : 'text-[#7B4B2A]'}`}
-              >
-                2×
+                <FiPlus size={14} />
               </button>
             </div>
           )}
@@ -154,30 +160,51 @@ function IngredientsList({ meal }) {
         )}
       </motion.div>
 
-      {showShoppingList && shoppingList.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          className="mb-6 bg-[#FFF7ED] border border-[#FFD6A5] rounded-xl p-4"
-        >
-          <h3 className="font-bold text-[#5C2C1E] mb-3">Shopping List ({shoppingList.length})</h3>
-          <ul className="space-y-2">
-            {shoppingList.map(item => (
-              <li key={`shop-${item.id}`} className="flex items-center gap-2 text-[#7B4B2A]">
-                <span className="w-5 h-5 rounded-full border border-[#FFD6A5] flex items-center justify-center">
-                  <FiCheck className="text-[#E07A5F] text-xs" />
-                </span>
-                {item.currentMeasure} {item.name}
-              </li>
-            ))}
-          </ul>
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {showShoppingList && shoppingList.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mb-6 bg-[#FFF7ED] border border-[#FFD6A5] rounded-xl p-4"
+          >
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="font-bold text-[#5C2C1E]">Shopping List ({shoppingList.length})</h3>
+              <button 
+                onClick={() => setCheckedItems({})}
+                className="text-xs text-[#E07A5F] hover:underline"
+              >
+                Mark all complete
+              </button>
+            </div>
+            <ul className="space-y-2">
+              {shoppingList.map(item => (
+                <motion.li 
+                  key={`shop-${item.id}`}
+                  layout
+                  className="flex items-center gap-2 text-[#7B4B2A]"
+                >
+                  <button 
+                    onClick={() => toggleIngredient(item.id)}
+                    className="w-5 h-5 rounded-full border border-[#FFD6A5] flex items-center justify-center hover:bg-[#FFD6A5]/30"
+                  >
+                    <FiCheck className="text-[#E07A5F] text-xs" />
+                  </button>
+                  <span>
+                    {item.currentMeasure} {item.name}
+                  </span>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {ingredients.map((item) => (
           <motion.div
             key={item.id}
+            layout
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, delay: ingredients.indexOf(item) * 0.03 }}
@@ -195,29 +222,39 @@ function IngredientsList({ meal }) {
                 className={`flex-shrink-0 w-5 h-5 mt-0.5 rounded border flex items-center justify-center transition-colors ${
                   checkedItems[item.id] 
                     ? 'bg-[#E07A5F] border-[#E07A5F]' 
-                    : 'border-[#FFD6A5]'
+                    : 'border-[#FFD6A5] hover:bg-[#FFD6A5]/30'
                 }`}
+                aria-label={checkedItems[item.id] ? 'Mark as needed' : 'Mark as complete'}
               >
                 {checkedItems[item.id] && <FiCheck className="text-white text-xs" />}
               </button>
               
               <div className="flex-1 min-w-0">
                 {editingId === item.id ? (
-                  <div className="flex gap-2">
+                  <form 
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      saveEdit(item.id);
+                    }}
+                    className="flex gap-2"
+                  >
                     <input
+                      ref={inputRef}
                       type="text"
                       value={item.currentMeasure}
                       onChange={(e) => handleManualEdit(item.id, e.target.value)}
-                      className="flex-1 min-w-0 px-2 py-1 border border-[#FFD6A5] rounded text-[#5C2C1E]"
-                      autoFocus
+                      onBlur={() => saveEdit(item.id)}
+                      className="flex-1 min-w-0 px-2 py-1 border border-[#FFD6A5] rounded text-[#5C2C1E] focus:ring-2 focus:ring-[#E07A5F] focus:border-transparent"
                     />
                     <button 
+                      type="button"
                       onClick={() => setEditingId(null)}
                       className="p-1 text-[#E07A5F] hover:bg-[#FFD6A5]/30 rounded"
+                      aria-label="Cancel edit"
                     >
                       <FiX />
                     </button>
-                  </div>
+                  </form>
                 ) : (
                   <div 
                     className={`font-medium ${
@@ -230,8 +267,15 @@ function IngredientsList({ meal }) {
               </div>
               
               <button 
-                onClick={() => setEditingId(editingId === item.id ? null : item.id)}
-                className="p-1 text-[#7B4B2A] hover:text-[#E07A5F]"
+                onClick={() => {
+                  if (editingId === item.id) {
+                    saveEdit(item.id);
+                  } else {
+                    setEditingId(item.id);
+                  }
+                }}
+                className={`p-1 ${editingId === item.id ? 'text-[#E07A5F]' : 'text-[#7B4B2A] hover:text-[#E07A5F]'}`}
+                aria-label={editingId === item.id ? 'Save changes' : 'Edit quantity'}
               >
                 <FiEdit2 size={16} />
               </button>
@@ -241,9 +285,13 @@ function IngredientsList({ meal }) {
       </div>
 
       {ingredients.length === 0 && (
-        <div className="text-center py-8 text-[#7B4B2A]">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center py-8 text-[#7B4B2A]"
+        >
           No ingredients listed for this recipe.
-        </div>
+        </motion.div>
       )}
     </section>
   );
