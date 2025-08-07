@@ -1,5 +1,3 @@
-
-
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
@@ -46,6 +44,20 @@ const userSchema = new mongoose.Schema(
       trim: true,
       match: [/^\d{10,15}$/, "Please enter a valid phone number"],
       required: false,
+    },
+    cookiePreferences: {
+      essential: { type: Boolean, default: true },
+      analytics: { type: Boolean, default: false },
+      preference: { type: Boolean, default: false },
+      consentTimestamp: { type: Date },
+      consentVersion: { type: String, default: "1.0" }
+    },
+    termsAccepted: {
+      type: Boolean,
+      default: false,
+    },
+    termsAcceptedAt: {
+      type: Date,
     },
   },
   {
