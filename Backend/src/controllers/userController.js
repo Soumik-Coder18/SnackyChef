@@ -12,9 +12,31 @@ const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString()
 export const signup = async (req, res) => {
   const { username, email, password } = req.body;
   try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser)
-      return res.status(400).json(new apiError(400, "User already exists"));
+    // Check for existing email and username separately
+    const [existingEmail, existingUsername] = await Promise.all([
+      User.findOne({ email }),
+      User.findOne({ username }),
+    ]);
+
+    if (existingEmail && existingUsername) {
+      return res.status(400).json(new apiError(400, "Both username and email are already registered").toJSON());
+    } else if (existingEmail) {
+      return res.status(400).json(new apiError(400, "This email is already registered").toJSON());
+    } else if (existingUsername) {
+      return res.status(400).json(new apiError(400, "Username is already taken").toJSON());
+    }
+
+    // // Check for existing email
+    // const existingEmail = await User.findOne({ email });
+    // if (existingEmail) {
+    //   return res.status(400).json(new apiError(400, "This email is already registered"));
+    // }
+
+    // // Check for existing username
+    // const existingUsername = await User.findOne({ username });
+    // if (existingUsername) {
+    //   return res.status(400).json(new apiError(400, "Username is already taken"));
+    // }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({ username, email, password: hashedPassword });
@@ -96,7 +118,16 @@ export const signup = async (req, res) => {
 
     res.status(201).json(new apiResponse(201, { userId: user._id }, "Signup successful, verify your email"));
   } catch (err) {
-    res.status(500).json(new apiError(500, "Signup failed", err.message));
+    // Check for MongoDB duplicate key error
+    if (err.code === 11000) {
+      const duplicatedField = Object.keys(err.keyValue)[0];
+      const message = duplicatedField === "email"
+        ? "This email is already registered"
+        : `Username '${err.keyValue[duplicatedField]}' is already taken`;
+      return res.status(400).json(new apiError(400, message).toJSON());
+    }
+
+    return res.status(500).json(new apiError(500, "Signup failed", err.message).toJSON());
   }
 };
 
@@ -105,7 +136,7 @@ export const verifyEmail = async (req, res) => {
   try {
     const validOtp = await OTP.findOne({ user: userId, otp });
     if (!validOtp || validOtp.expiresAt < new Date()) {
-      return res.status(400).json(new apiError(400, "OTP is invalid or expired"));
+      return res.status(400).json(new apiError(400, "OTP is invalid or expired").toJSON());
     }
 
     await User.findByIdAndUpdate(userId, { isVerified: true });
@@ -113,7 +144,7 @@ export const verifyEmail = async (req, res) => {
 
     res.status(200).json(new apiResponse(200, null, "Email verified successfully"));
   } catch (err) {
-    res.status(500).json(new apiError(500, "Verification failed", err.message));
+    res.status(500).json(new apiError(500, "Verification failed", err.message).toJSON());
   }
 };
 
@@ -125,11 +156,11 @@ export const login = async (req, res) => {
     }).select("+password");
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(401).json(new apiError(401, "Invalid credentials"));
+      return res.status(401).json(new apiError(401, "Invalid credentials").toJSON());
     }
 
     if (!user.isVerified) {
-      return res.status(403).json(new apiError(403, "Email not verified"));
+      return res.status(403).json(new apiError(403, "Email not verified").toJSON());
     }
 
     // Generate access and refresh tokens using secrets and expiry from .env
@@ -164,7 +195,7 @@ export const login = async (req, res) => {
     // Return the access token in the response body
     res.status(200).json(new apiResponse(200, { accessToken }, "Login successful"));
   } catch (err) {
-    res.status(500).json(new apiError(500, "Login failed", err.message));
+    res.status(500).json(new apiError(500, "Login failed", err.message).toJSON());
   }
 };
 
@@ -188,7 +219,7 @@ export const getProfile = async (req, res) => {
       }, "Profile fetched successfully")
     );
   } catch (err) {
-    res.status(500).json(new apiError(500, "Failed to fetch profile", err.message));
+    res.status(500).json(new apiError(500, "Failed to fetch profile", err.message).toJSON());
   }
 };
 
@@ -220,7 +251,7 @@ export const updateProfile = async (req, res) => {
       }, "Profile updated")
     );
   } catch (err) {
-    res.status(500).json(new apiError(500, "Update failed", err.message));
+    res.status(500).json(new apiError(500, "Update failed", err.message).toJSON());
   }
 };
 
@@ -246,7 +277,7 @@ export const updateCookiePreferences = async (req, res) => {
       new apiResponse(200, user.cookiePreferences, "Preferences updated")
     );
   } catch (err) {
-    res.status(500).json(new apiError(500, "Failed to update preferences", err.message));
+    res.status(500).json(new apiError(500, "Failed to update preferences", err.message).toJSON());
   }
 };
 
@@ -269,6 +300,6 @@ export const acceptTerms = async (req, res) => {
       }, "Terms of Service accepted")
     );
   } catch (err) {
-    res.status(500).json(new apiError(500, "Failed to accept terms", err.message));
+    res.status(500).json(new apiError(500, "Failed to accept terms", err.message).toJSON());
   }
 };
