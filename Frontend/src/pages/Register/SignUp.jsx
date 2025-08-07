@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
+import axios from '../../api/axiosInstance';
 import { motion } from 'framer-motion';
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
 import Lottie from 'lottie-react';
 import signupAnimation from '../../assets/animations/Login.json';
+import toast, { Toaster } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
+    username: '',
     email: '',
     password: '',
     acceptTerms: false
@@ -32,7 +36,7 @@ const SignUp = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'Name is required';
+    if (!formData.username.trim()) newErrors.username = 'Username is required';
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
@@ -50,16 +54,51 @@ const SignUp = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
       setIsSubmitting(true);
-      // Simulate form submission
-      setTimeout(() => {
+      try {
+        const response = await axios.post('/signup', {
+          username: formData.username,
+          email: formData.email,
+          password: formData.password
+        });
+        console.log('Signup success:', response.data);
+        toast.success(response.data.message || 'Signup successful! Please verify your email.');
+        navigate('/otp', { state: { userId: response.data.data.userId } });
+        // optionally redirect or notify user to check email for OTP
+      } catch (error) {
+        console.error('Signup error:', error?.response?.data || error.message);
+        const statusCode = error?.response?.status;
+        const serverMessage = error?.response?.data?.message;
+        const rawErrors = error?.response?.data?.errors;
+        const errorDetail = error?.response?.data?.error;
+
+        if (statusCode === 400) {
+          if (serverMessage) {
+            toast.error(serverMessage);
+          } else if (Array.isArray(rawErrors) && rawErrors.length > 0) {
+            rawErrors.forEach(err => toast.error(err));
+          } else {
+            toast.error("Bad request. Please check your input.");
+          }
+        } else if (statusCode === 500 && errorDetail?.includes("E11000")) {
+          if (errorDetail.includes("email")) {
+            toast.error(`Email "${formData.email}" is already in use.`);
+          } else if (errorDetail.includes("username")) {
+            toast.error(`Username "${formData.username}" is already taken.`);
+          } else {
+            toast.error("Duplicate entry detected.");
+          }
+        } else {
+          toast.error(serverMessage || "Something went wrong. Please try again later.");
+        }
+
+        setErrors({});
+      } finally {
         setIsSubmitting(false);
-        // Handle successful signup here
-        console.log('Signup successful:', formData);
-      }, 1500);
+      }
     }
   };
 
@@ -88,10 +127,10 @@ const SignUp = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5 mt-6">
-            {/* Name Field */}
+            {/* Username Field */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium mb-1 text-[#5C2C1E]">
-                Full Name
+              <label htmlFor="username" className="block text-sm font-medium mb-1 text-[#5C2C1E]">
+                Username
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#5C2C1E]/70">
@@ -99,15 +138,15 @@ const SignUp = () => {
                 </div>
                 <input
                   type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
+                  id="username"
+                  name="username"
+                  value={formData.username}
                   onChange={handleChange}
-                  placeholder="Your name"
-                  className={`w-full pl-10 pr-4 py-3 rounded-lg bg-[#FFF7ED] border ${errors.name ? 'border-red-400' : 'border-[#FFD6A5]'} focus:ring-2 focus:ring-[#E07A5F] focus:border-[#E07A5F] outline-none transition`}
+                  placeholder="Your username"
+                  className={`w-full pl-10 pr-4 py-3 rounded-lg bg-[#FFF7ED] border ${errors.username ? 'border-red-400' : 'border-[#FFD6A5]'} focus:ring-2 focus:ring-[#E07A5F] focus:border-[#E07A5F] outline-none transition`}
                 />
               </div>
-              {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
+              {errors.username && <p className="mt-1 text-sm text-red-500">{errors.username}</p>}
             </div>
 
             {/* Email Field */}
@@ -240,6 +279,7 @@ const SignUp = () => {
           </div>
         </motion.div>
       </div>
+      <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
     </section>
   );
 };

@@ -1,18 +1,25 @@
-import React, { useState } from 'react';
+import axiosInstance from '../../api/axiosInstance';
+import React, { useState, useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
 import { motion } from 'framer-motion';
 import { FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
 import Lottie from 'lottie-react';
 import signupAnimation from '../../assets/animations/Login.json';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
+    identifier: '',
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
+  const { setUser } = useContext(AuthContext);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,10 +38,8 @@ const Login = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
+    if (!formData.identifier.trim()) {
+      newErrors.identifier = 'Email or username is required';
     }
     if (!formData.password) {
       newErrors.password = 'Password is required';
@@ -43,16 +48,46 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
       setIsSubmitting(true);
-      // Simulate login process
-      setTimeout(() => {
+      try {
+        const response = await axiosInstance.post('/login', formData);
+        console.log("Login response:", response.data); // Debugging line
+        const accessToken = response?.data?.data?.accessToken;
+        if (accessToken) {
+          localStorage.setItem('accessToken', accessToken);
+
+          // Fetch user profile and set user context
+          try {
+            const profileRes = await axiosInstance.get('/profile');
+            setUser(profileRes.data.data);
+          } catch (err) {
+            setUser(null);
+          }
+
+          toast.success(response?.data?.message || 'Login successful!');
+          navigate('/');
+        } else {
+          toast.error('Login failed: no token received');
+        }
+      } catch (error) {
+        console.error("Login error:", error.response?.data || error);
+        const res = error.response?.data;
+
+        const message =
+          res?.errors?.[0] ||
+          res?.message ||
+          error.message ||
+          "Something went wrong. Please try again.";
+
+        toast.error(message);
+      } finally {
         setIsSubmitting(false);
-        // Handle successful login here
-        console.log('Login successful:', formData);
-      }, 1500);
+      }
+    } else {
+      toast.error('Please fix the highlighted errors.');
     }
   };
 
@@ -81,26 +116,26 @@ const Login = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5 mt-6">
-            {/* Email Field */}
+            {/* Email or Username Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-1 text-[#5C2C1E]">
-                Email Address
+              <label htmlFor="identifier" className="block text-sm font-medium mb-1 text-[#5C2C1E]">
+                Email or Username
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#5C2C1E]/70">
                   <FiMail />
                 </div>
                 <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
+                  type="text"
+                  id="identifier"
+                  name="identifier"
+                  value={formData.identifier}
                   onChange={handleChange}
-                  placeholder="your@email.com"
-                  className={`w-full pl-10 pr-4 py-3 rounded-lg bg-[#FFF7ED] border ${errors.email ? 'border-red-400' : 'border-[#FFD6A5]'} focus:ring-2 focus:ring-[#E07A5F] focus:border-[#E07A5F] outline-none transition`}
+                  placeholder="your@email.com or username"
+                  className={`w-full pl-10 pr-4 py-3 rounded-lg bg-[#FFF7ED] border ${errors.identifier ? 'border-red-400' : 'border-[#FFD6A5]'} focus:ring-2 focus:ring-[#E07A5F] focus:border-[#E07A5F] outline-none transition`}
                 />
               </div>
-              {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
+              {errors.identifier && <p className="mt-1 text-sm text-red-500">{errors.identifier}</p>}
             </div>
 
             {/* Password Field */}
@@ -199,6 +234,7 @@ const Login = () => {
           </div>
         </motion.div>
       </div>
+      <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
     </section>
   );
 };

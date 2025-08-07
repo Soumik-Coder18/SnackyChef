@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiBook, FiUser, FiLock, FiExternalLink, FiChevronDown, FiAlertTriangle, FiCheck } from 'react-icons/fi';
+import axiosInstance from '../../api/axiosInstance';
+import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
 
 const TermsOfService = () => {
+  const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
   const [expandedSection, setExpandedSection] = useState(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [readSections, setReadSections] = useState([]);
@@ -137,10 +143,20 @@ const TermsOfService = () => {
     }
   ];
 
-  const handleAcceptTerms = () => {
-    setAcceptedTerms(true);
-    // In a real app, you would likely send this to your backend
-    localStorage.setItem('termsAccepted', 'true');
+  const handleAcceptTerms = async () => {
+    if (!user) {
+      toast.error("You need to login first");
+      return navigate("/login");
+    }
+    try {
+      const response = await axiosInstance.post("/accept-terms");
+      setAcceptedTerms(true);
+      localStorage.setItem('termsAccepted', 'true');
+      toast.success(response.data.message || "Terms accepted successfully");
+    } catch (error) {
+      console.error("Failed to accept terms:", error);
+      toast.error(error?.response?.data?.message || "Failed to accept terms");
+    }
   };
 
   const progress = (readSections.length / sections.length) * 100;

@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiSettings, FiBarChart2, FiCheckCircle, FiX, FiChevronDown } from 'react-icons/fi';
+import toast from 'react-hot-toast';
+import axiosInstance from '../../api/axiosInstance';
+import { AuthContext } from '../../context/AuthContext';
 
 const CookiePolicy = () => {
   const [activeTab, setActiveTab] = useState('essential');
   const [showConsentBanner, setShowConsentBanner] = useState(true);
+  const [essentialEnabled, setEssentialEnabled] = useState(true);
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
+  const [preferenceEnabled, setPreferenceEnabled] = useState(false);
+  const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
   const cookieTypes = {
     essential: {
@@ -47,6 +55,27 @@ const CookiePolicy = () => {
     // In a real app, you would save these preferences
     console.log(`User consented to ${consentType} cookies`);
     setShowConsentBanner(false);
+  };
+
+  const handleSavePreferences = async () => {
+    if (!user) {
+      toast.error("Please log in to save preferences.");
+      navigate("/login");
+      return;
+    }
+
+    const preferences = {
+      essential: essentialEnabled,
+      analytics: analyticsEnabled,
+      preference: preferenceEnabled,
+    };
+
+    try {
+      await axiosInstance.patch("/cookie-preferences", preferences);
+      toast.success("Preferences saved successfully");
+    } catch (err) {
+      toast.error("Failed to save preferences");
+    }
   };
 
   return (
@@ -172,11 +201,22 @@ const CookiePolicy = () => {
               </p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
-              <input 
-                type="checkbox" 
-                className="sr-only peer" 
-                checked={activeTab === 'essential'} 
-                disabled={activeTab === 'essential'}
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={
+                  activeTab === 'essential'
+                    ? essentialEnabled
+                    : activeTab === 'analytics'
+                    ? analyticsEnabled
+                    : preferenceEnabled
+                }
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  if (activeTab === 'essential') setEssentialEnabled(checked);
+                  if (activeTab === 'analytics') setAnalyticsEnabled(checked);
+                  if (activeTab === 'preference') setPreferenceEnabled(checked);
+                }}
               />
               <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#E07A5F]"></div>
             </label>
@@ -230,24 +270,6 @@ const CookiePolicy = () => {
             </Link>
           </motion.div>
         </div>
-
-        {/* Save Preferences */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="p-6 rounded-xl text-center"
-        >
-          <h3 className="text-xl font-semibold text-[#5C2C1E] mb-3">Ready to update your preferences?</h3>
-          <div className="flex flex-wrap justify-center gap-4">
-            <button className="px-6 py-3 rounded-full bg-gradient-to-r from-[#E07A5F] to-[#FF9E5E] text-white font-semibold hover:from-[#D06A50] hover:to-[#EE8E4E] transition-all shadow-md hover:shadow-lg">
-              Save Preferences
-            </button>
-            <button className="px-6 py-3 rounded-full border border-[#E07A5F] text-[#E07A5F] font-semibold hover:bg-[#FFEFE5] transition">
-              Reset to Default
-            </button>
-          </div>
-        </motion.div>
       </div>
     </section>
   );
