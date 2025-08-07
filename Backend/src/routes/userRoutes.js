@@ -1,5 +1,3 @@
-
-
 import express from "express";
 import {
   signup,
@@ -8,6 +6,8 @@ import {
   logout,
   getProfile,
   updateProfile,
+  updateCookiePreferences,
+  acceptTerms
 } from "../controllers/userController.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 import upload from "../middlewares/multerMiddleware.js";
@@ -21,5 +21,7 @@ router.post("/logout", logout);
 
 router.get("/profile", authMiddleware, getProfile);
 router.patch("/update-profile", authMiddleware, upload.single("avatar"), updateProfile);
+router.patch("/cookie-preferences", authMiddleware, updateCookiePreferences);
+router.post("/accept-terms", authMiddleware, acceptTerms);
 
 export default router;

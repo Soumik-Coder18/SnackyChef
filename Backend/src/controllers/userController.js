@@ -25,10 +25,74 @@ export const signup = async (req, res) => {
     await OTP.create({ user: user._id, otp, expiresAt });
 
     await sendEmail({
-      to: email,
-      subject: "Verify your email",
-      html: `<p>Your OTP is <b>${otp}</b>. It expires in 5 minutes.</p>`,
-    });
+  to: email,
+  subject: "Verify Your Email - SnackyChef",
+  html: `
+    <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+      <!-- Header with Logo -->
+      <div style="background-color: #FF7F50; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
+        <div style="display: inline-flex; align-items: center; gap: 10px;">
+          <svg 
+            width="44" 
+            height="44" 
+            viewBox="0 0 64 64" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="32" cy="32" r="30" fill="#FF7F50" stroke="#FFF7ED" stroke-width="2"/>
+            <rect x="18" y="28" width="28" height="14" rx="3" fill="#FFF7ED" stroke="#FF7F50" stroke-width="2"/>
+            <rect x="24" y="20" width="16" height="4" rx="2" fill="#FFF7ED"/>
+            <path d="M42 28L48 22" stroke="#FFF7ED" stroke-width="2" stroke-linecap="round"/>
+            <path d="M22 28L16 22" stroke="#FFF7ED" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 500;">
+            <span style="font-weight: 700;">SnackyChef</span>
+          </h1>
+        </div>
+      </div>
+      
+      <!-- Email Content -->
+      <div style="padding: 30px; background-color: #ffffff; border: 1px solid #FFD6A5; border-top: none; border-radius: 0 0 8px 8px;">
+        <h2 style="color: #5C2C1E; margin-top: 0; font-size: 20px; font-weight: 600;">
+          Welcome to SnackyChef, ${username}!
+        </h2>
+        
+        <p style="margin-bottom: 20px; font-size: 15px; line-height: 1.6;">
+          We're excited to have you on board. To complete your registration, please verify your email address:
+        </p>
+        
+        <!-- OTP Box -->
+        <div style="background-color: #FFF7ED; border: 1px dashed #FFD6A5; 
+                  border-radius: 6px; padding: 15px; text-align: center; 
+                  margin: 25px 0; font-size: 28px; font-weight: 700; 
+                  letter-spacing: 2px; color: #E07A5F;">
+          ${otp}
+        </div>
+        
+        <p style="margin-bottom: 25px; font-size: 14px; color: #7B4B2A;">
+          This verification code will expire in <strong>5 minutes</strong>.
+        </p>
+        
+        <div style="border-top: 1px solid #FFD6A5; padding-top: 20px; margin-top: 20px;">
+          <p style="font-size: 13px; color: #999; margin-bottom: 5px;">
+            If you didn't request this email, you can safely ignore it.
+          </p>
+          <p style="font-size: 13px; color: #999; margin: 0;">
+            Ready to get started?<br>
+            <strong>The SnackyChef Team</strong>
+          </p>
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <div style="text-align: center; padding: 15px 0; margin-top: 20px;">
+        <p style="font-size: 12px; color: #999; margin: 5px 0;">
+          © ${new Date().getFullYear()} SnackyChef. All rights reserved.
+        </p>
+      </div>
+    </div>
+  `,
+});
 
     res.status(201).json(new apiResponse(201, { userId: user._id }, "Signup successful, verify your email"));
   } catch (err) {
@@ -157,5 +221,54 @@ export const updateProfile = async (req, res) => {
     );
   } catch (err) {
     res.status(500).json(new apiError(500, "Update failed", err.message));
+  }
+};
+
+export const updateCookiePreferences = async (req, res) => {
+  try {
+    const { essential, analytics, preference } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        cookiePreferences: {
+          essential,
+          analytics,
+          preference,
+          consentTimestamp: new Date(),
+          consentVersion: "1.0"
+        },
+      },
+      { new: true }
+    );
+
+    res.status(200).json(
+      new apiResponse(200, user.cookiePreferences, "Preferences updated")
+    );
+  } catch (err) {
+    res.status(500).json(new apiError(500, "Failed to update preferences", err.message));
+  }
+};
+
+// Accept Terms of Service controller
+export const acceptTerms = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        termsAccepted: true,
+        termsAcceptedAt: new Date(),
+      },
+      { new: true }
+    );
+
+    res.status(200).json(
+      new apiResponse(200, {
+        termsAccepted: user.termsAccepted,
+        termsAcceptedAt: user.termsAcceptedAt,
+      }, "Terms of Service accepted")
+    );
+  } catch (err) {
+    res.status(500).json(new apiError(500, "Failed to accept terms", err.message));
   }
 };
