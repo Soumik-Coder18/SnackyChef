@@ -1,5 +1,7 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+import Loader from '../components/Loader';
 import Home from '../pages/Home/Home';
 import PrivacyPolicy from '../pages/Legal/PrivacyPolicy';
 import TermsOfService from '../pages/Legal/TermsOfService';
@@ -9,39 +11,59 @@ import Contact from '../pages/Contact/Contact';
 import About from '../pages/Contact/About';
 import SignUp from '../pages/Register/SignUp';
 import Login from '../pages/Register/login';
+import OTP from '../pages/Register/OTP';
 import Recipe from '../pages/Recipe/MainRecipePage';
 import ViewAllRecipe from '../pages/Recipe/ViewAll/ViewAllRecipe';
 import SearchResult from '../pages/Recipe/SearchResult';
-import HowItWorks from '../pages/Contact/HowItWorks'
+import HowItWorks from '../pages/Contact/HowItWorks';
 import RecipeDetails from '../pages/RecipeDetails/MainRecipeDetails';
 import Favourite from '../pages/Favourites/Favourite';
-// Needs to protectedroute
 import CreateRecipe from '../SocialPages/UserRecipes/CreateRecipe';
+import UserDashboard from '../Dashboard/UserDashboard';
+
+function ProtectedRoute({ children }) {
+  const { user } = useContext(AuthContext);
+
+  if (user === undefined) {
+    return <Loader />;
+  }
+
+  return user ? children : <Navigate to="/login" />;
+}
 
 function AppRouter() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/terms-of-service" element={<TermsOfService />} />
-        <Route path="/cookies" element={<Cookies />} />
-        <Route path="/full-policy" element={<FullPolicy />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/recipe" element={<Recipe />} />
-        <Route path="/recipe/:id" element={<RecipeDetails />} />
-        <Route path="/view-all" element={<ViewAllRecipe />} />
-        <Route path="/search" element={<SearchResult />} />
-        <Route path="/how-it-works" element={<HowItWorks />} />
-        <Route path="/favourite" element={<Favourite />} />
-        {/* Protected route will implemented later */}
-        <Route path="/create-recipe" element={<CreateRecipe />} />
-        {/* Add more routes here later */}
-      </Routes>
-    </Router>
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<Home />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/terms-of-service" element={<TermsOfService />} />
+      <Route path="/cookies" element={<Cookies />} />
+      <Route path="/full-policy" element={<FullPolicy />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/otp" element={<OTP />} />
+      <Route path="/recipe" element={<Recipe />} />
+      <Route path="/recipe/:id" element={<RecipeDetails />} />
+      <Route path="/view-all" element={<ViewAllRecipe />} />
+      <Route path="/search" element={<SearchResult />} />
+      <Route path="/how-it-works" element={<HowItWorks />} />
+      <Route path="/favourite" element={<Favourite />} />
+
+      {/* Protected Routes */}
+      <Route path="/create-recipe" element={
+        <ProtectedRoute>
+          <CreateRecipe />
+        </ProtectedRoute>
+      } />
+      <Route path="/UserDashboard" element={
+        <ProtectedRoute>
+          <UserDashboard />
+        </ProtectedRoute>
+      } />
+    </Routes>
   );
 }
 
