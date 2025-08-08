@@ -20,6 +20,7 @@ import RecipeDetails from '../pages/RecipeDetails/MainRecipeDetails';
 import Favourite from '../pages/Favourites/Favourite';
 import CreateRecipe from '../SocialPages/UserRecipes/CreateRecipe';
 import UserDashboard from '../Dashboard/UserDashboard';
+import RecipeWorld from '../pages/RecipeWorld/RecipeWorld';
 
 function ProtectedRoute({ children }) {
   const { user } = useContext(AuthContext);
@@ -51,6 +52,7 @@ function AppRouter() {
       <Route path="/search" element={<SearchResult />} />
       <Route path="/how-it-works" element={<HowItWorks />} />
       <Route path="/favourite" element={<Favourite />} />
+      <Route path="/recipe-world" element={<RecipeWorld />} />
 
       {/* Protected Routes */}
       <Route path="/create-recipe" element={
