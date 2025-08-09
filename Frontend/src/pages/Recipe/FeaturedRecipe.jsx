@@ -16,7 +16,7 @@ function FeaturedRecipe({ meals }) {
   return (
     <section className="relative py-1 px-4 sm:px-6 lg:px-8  overflow-hidden">
       {/* Decorative elements */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-10">
+      <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 rounded-full bg-[#FF7F50] mix-blend-multiply filter blur-xl"></div>
         <div className="absolute bottom-10 right-20 w-40 h-40 rounded-full bg-[#5C2C1E] mix-blend-multiply filter blur-xl"></div>
       </div>
@@ -84,13 +84,13 @@ function FeaturedRecipe({ meals }) {
       </div>
 
       <div className="text-center mt-12">
-        <a 
-          href="/view-all" 
+        <Link 
+          to="/view-all" 
           className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#FF7F50] to-[#E07A5F] text-white font-medium rounded-full hover:shadow-lg transition-all"
         >
           Explore All Recipes
           <FiArrowRight className="ml-2" />
-        </a>
+        </Link>
       </div>
     </section>
   );

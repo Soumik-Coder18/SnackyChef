@@ -167,13 +167,6 @@ const Login = () => {
               {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password}</p>}
             </div>
 
-            {/* Remember Me & Forgot Password */}
-            <div className="text-right">
-              <a href="/forgot-password" className="text-sm text-[#E07A5F] hover:underline">
-                Forgot password?
-              </a>
-            </div>
-
             {/* Submit Button */}
             <motion.button
               type="submit"
