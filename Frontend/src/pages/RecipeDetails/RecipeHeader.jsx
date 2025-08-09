@@ -1,10 +1,49 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axiosInstance from "../../api/axiosInstance";
 import { motion } from 'framer-motion';
 import { FiHeart, FiClock, FiUsers, FiExternalLink } from 'react-icons/fi';
 import { FaRegClock, FaRegUser } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
-function RecipeHeader({ meal }) {
+function RecipeHeader({ meal, user }) {
+  const navigate = useNavigate();
+
   if (!meal) return null;
+
+  const [isFav, setIsFav] = useState(false);
+
+  useEffect(() => {
+    // Fetch initial favorite status for this recipe
+    async function fetchFav() {
+      try {
+        const res = await axiosInstance.get("/favourites");
+        if (res.data.success && Array.isArray(res.data.data)) {
+          setIsFav(res.data.data.includes(meal.idMeal));
+        }
+      } catch (error) {
+        console.error("Failed to fetch favourites", error);
+      }
+    }
+    if (meal?.idMeal) fetchFav();
+  }, [meal]);
+
+  const toggleFavourite = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    try {
+      if (isFav) {
+        await axiosInstance.delete(`/favourites/${meal.idMeal}`);
+        setIsFav(false);
+      } else {
+        await axiosInstance.post("/favourites", { recipeId: meal.idMeal });
+        setIsFav(true);
+      }
+    } catch (error) {
+      console.error("Failed to toggle favourite", error);
+    }
+  };
 
   // Calculate random cooking time (15-60 mins) and servings (2-6)
   const cookingTime = Math.floor(Math.random() * 45) + 15;
@@ -80,10 +119,15 @@ function RecipeHeader({ meal }) {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="px-6 py-3 bg-gradient-to-r from-[#FF7F50] to-[#E07A5F] text-white font-medium rounded-full hover:shadow-md transition-all flex items-center gap-2"
+                  className={`px-6 py-3 font-medium rounded-full hover:shadow-md transition-all flex items-center gap-2 ${
+                    isFav
+                      ? "bg-red-500 text-white hover:bg-red-600"
+                      : "bg-gradient-to-r from-[#FF7F50] to-[#E07A5F] text-white"
+                  }`}
+                  onClick={toggleFavourite}
                 >
                   <FiHeart className="w-5 h-5" />
-                  Save Recipe
+                  {isFav ? "Unfavorite" : "Favorite"}
                 </motion.button>
 
                 {meal.strSource && (
