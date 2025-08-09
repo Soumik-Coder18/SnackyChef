@@ -7,7 +7,10 @@ import {
   getProfile,
   updateProfile,
   updateCookiePreferences,
-  acceptTerms
+  acceptTerms,
+  getFavourites,
+  addFavourite,
+  removeFavourite
 } from "../controllers/userController.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 import upload from "../middlewares/multerMiddleware.js";
@@ -23,5 +26,9 @@ router.get("/profile", authMiddleware, getProfile);
 router.patch("/update-profile", authMiddleware, upload.single("avatar"), updateProfile);
 router.patch("/cookie-preferences", authMiddleware, updateCookiePreferences);
 router.post("/accept-terms", authMiddleware, acceptTerms);
+
+router.get("/favourites", authMiddleware, getFavourites);
+router.post("/favourites", authMiddleware, addFavourite);
+router.delete("/favourites/:recipeId", authMiddleware, removeFavourite);
 
 export default router;

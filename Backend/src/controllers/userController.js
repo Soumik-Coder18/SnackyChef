@@ -3,6 +3,7 @@ import { apiError } from "../utils/apiError.js";
 import apiResponse from "../utils/apiResponse.js";
 import User from "../models/userModel.js";
 import OTP from "../models/otpModel.js";
+import Favourite from "../models/favouriteModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -301,5 +302,74 @@ export const acceptTerms = async (req, res) => {
     );
   } catch (err) {
     res.status(500).json(new apiError(500, "Failed to accept terms", err.message).toJSON());
+  }
+};
+
+// Get user favourites
+export const getFavourites = async (req, res) => {
+  try {
+    const favourites = await Favourite.find({ user: req.user.id }).select("recipeId");
+    const recipeIds = favourites.map(fav => fav.recipeId);
+    res.status(200).json({
+      success: true,
+      data: recipeIds,
+      message: "Favourites fetched successfully"
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch favourites",
+      error: err.message
+    });
+  }
+};
+
+// Add a favourite
+export const addFavourite = async (req, res) => {
+  const { recipeId } = req.body;
+  try {
+    const existing = await Favourite.findOne({ user: req.user.id, recipeId });
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        message: "Recipe already in favourites"
+      });
+    }
+    const favourite = await Favourite.create({ user: req.user.id, recipeId });
+    res.status(201).json({
+      success: true,
+      data: favourite,
+      message: "Added to favourites"
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to add favourite",
+      error: err.message
+    });
+  }
+};
+
+// Remove a favourite
+export const removeFavourite = async (req, res) => {
+  const { recipeId } = req.params;
+  try {
+    const deleted = await Favourite.findOneAndDelete({ user: req.user.id, recipeId });
+    if (!deleted) {
+      return res.status(404).json({
+        success: false,
+        message: "Favourite not found"
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Removed from favourites"
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to remove favourite",
+      error: err.message
+    });
   }
 };
