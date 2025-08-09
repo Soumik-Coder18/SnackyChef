@@ -88,7 +88,7 @@ function SimilarRecipes() {
           {similarRecipes.map(meal => (
             <div 
               key={meal.idMeal} 
-              className="transition-transform hover:scale-[1.02] hover:shadow-lg"
+              className="h-full min-h-[320px] flex transition-transform hover:scale-[1.02] hover:shadow-lg"
             >
               <Card meal={meal} />
             </div>

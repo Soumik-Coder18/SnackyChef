@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiHeart, FiClock, FiBookmark, FiSearch, FiX } from 'react-icons/fi';
+import { FiHeart, FiBookmark, FiSearch, FiX, FiLogIn } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 import Card from '../../components/Card';
 import axiosInstance from "../../api/axiosInstance";
 import { getMealById } from "../../api/mealdb";
@@ -13,6 +14,8 @@ function Favourite() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // Initially assume logged in
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFavourites = async () => {
@@ -31,8 +34,12 @@ function Favourite() {
           setFilteredFavourites(validRecipes);
         }
       } catch (error) {
-        console.error("Failed to fetch favourites", error);
-        setError("Failed to load your favorite recipes. Please try again later.");
+        if (error.response && error.response.status === 401) {
+          setIsLoggedIn(false);
+        } else {
+          console.error("Failed to fetch favourites", error);
+          setError("Failed to load your favorite recipes. Please try again later.");
+        }
       }
       setIsLoading(false);
     };
@@ -68,7 +75,7 @@ function Favourite() {
             setFavourites(prev => [meal, ...prev]);
             setFilteredFavourites(prev => [meal, ...prev]);
           }}
-          className="text-amber-600 hover:text-amber-700 font-medium"
+          className="text-[#ff7f50] hover:text-amber-700 font-medium"
         >
           Undo
         </button>
@@ -77,8 +84,15 @@ function Favourite() {
         autoClose: 5000,
         closeButton: false,
         position: "bottom-right",
-        className: "!bg-amber-50 !text-amber-900 !rounded-xl !shadow-lg",
-        bodyClassName: "!p-3",
+        // className: "!bg-amber-50 !text-amber-900 !rounded-xl !shadow-lg",
+        // bodyClassName: "!p-3",
+        style: {
+          backgroundColor: '#FFF7ED',
+          color: '#5C2C1E',
+          fontWeight: '600',
+          borderRadius: '12px',
+          boxShadow: '0 4px 12px rgba(224, 122, 95, 0.3)',
+        },
       }
     );
 
@@ -94,8 +108,14 @@ function Favourite() {
               <span>Failed to remove favorite</span>
             </div>,
             {
-              className: "!bg-red-50 !text-red-700 !rounded-xl !shadow-lg",
-              bodyClassName: "!p-3",
+              // className: "!bg-red-50 !text-red-700 !rounded-xl !shadow-lg",
+              // bodyClassName: "!p-3",
+              style: {
+                backgroundColor: '#E07A5F',
+                color: '#FFF7ED',
+                fontWeight: '600',
+                borderRadius: '12px',
+              },
             }
           );
           // Restore if API fails
@@ -105,6 +125,52 @@ function Favourite() {
       }
     }, 5000);
   };
+
+  if (!isLoggedIn) {
+    return (
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+        className="px-4 py-12 max-w-7xl mx-auto min-h-screen flex items-center justify-center"
+      >
+        <div className="text-center max-w-md">
+          <motion.div
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 200 }}
+            className="bg-gradient-to-r from-amber-100 to-orange-100 p-6 rounded-2xl inline-flex mb-6"
+          >
+            <FiHeart className="text-[#ff7f50] w-10 h-10" />
+          </motion.div>
+          <h1 className="text-3xl md:text-4xl font-bold text-[#a0522d] mb-4">
+            Save Your Favorite Recipes
+          </h1>
+          <p className="text-lg text-gray-600 mb-8">
+            Log in to access your saved recipes across all devices and never lose your culinary inspirations.
+          </p>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate('/login')}
+            className="inline-flex items-center px-6 py-3 bg-[#ff7f50] text-white font-medium rounded-xl hover:bg-amber-700 transition-colors shadow-lg"
+          >
+            <FiLogIn className="mr-2" />
+            Sign In to View Favorites
+          </motion.button>
+          <p className="mt-4 text-gray-500">
+            Don't have an account?{' '}
+            <button 
+              onClick={() => navigate('/signup')}
+              className="text-[#ff7f50] hover:underline"
+            >
+              Create one
+            </button>
+          </p>
+        </div>
+      </motion.section>
+    );
+  }
 
   return (
     <motion.section
@@ -121,9 +187,9 @@ function Favourite() {
           transition={{ type: 'spring', stiffness: 200 }}
           className="bg-gradient-to-r from-amber-100 to-orange-100 p-5 rounded-2xl inline-flex mb-6"
         >
-          <FiBookmark className="text-amber-600 w-8 h-8" />
+          <FiBookmark className="text-[#ff7f50] w-8 h-8" />
         </motion.div>
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
+        <h1 className="text-4xl md:text-5xl font-bold text-[#a1512b] mb-3">
           Your Culinary Treasures
         </h1>
         <p className="text-lg text-gray-600 max-w-2xl">
@@ -206,7 +272,7 @@ function Favourite() {
           className="flex flex-col items-center justify-center py-16 text-center bg-amber-50 rounded-2xl"
         >
           <div className="p-5 bg-gradient-to-r from-amber-100 to-orange-100 rounded-full mb-6">
-            <FiHeart className="text-amber-600 text-4xl" />
+            <FiHeart className="text-[#ff7f50] text-4xl" />
           </div>
           <h3 className="text-2xl font-medium text-gray-900 mb-3">
             {searchQuery ? 'No matching favorites' : 'Your favorites list is empty'}
@@ -219,14 +285,14 @@ function Favourite() {
           {searchQuery ? (
             <button
               onClick={() => setSearchQuery('')}
-              className="px-6 py-3 bg-amber-600 text-white font-medium rounded-xl hover:bg-amber-700 transition-colors shadow-sm"
+              className="px-6 py-3 bg-[#ff7f50] text-white font-medium rounded-xl hover:bg-amber-700 transition-colors shadow-sm"
             >
               Clear Search
             </button>
           ) : (
             <button
-              onClick={() => window.location.href = '/explore'}
-              className="px-6 py-3 bg-amber-600 text-white font-medium rounded-xl hover:bg-amber-700 transition-colors shadow-sm"
+              onClick={() => navigate('/explore')}
+              className="px-6 py-3 bg-[#ff7f50] text-white font-medium rounded-xl hover:bg-amber-700 transition-colors shadow-sm"
             >
               Explore Recipes
             </button>
@@ -243,7 +309,7 @@ function Favourite() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                className="relative group"
+                className="relative group h-full min-h-[320px] flex"
               >
                 <Card meal={meal} />
                 <motion.button

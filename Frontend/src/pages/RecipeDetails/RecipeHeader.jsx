@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
 import axiosInstance from "../../api/axiosInstance";
 import { motion } from 'framer-motion';
 import { FiHeart, FiClock, FiUsers, FiExternalLink } from 'react-icons/fi';
 import { FaRegClock, FaRegUser } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
-function RecipeHeader({ meal, user }) {
+function RecipeHeader({ meal }) {
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   if (!meal) return null;
@@ -28,7 +30,8 @@ function RecipeHeader({ meal, user }) {
   }, [meal]);
 
   const toggleFavourite = async () => {
-    if (!user) {
+    // console.log("User in toggleFavourite:", user);
+    if (!user || !(user._id || user.id)) {
       navigate('/login');
       return;
     }
@@ -44,10 +47,7 @@ function RecipeHeader({ meal, user }) {
       console.error("Failed to toggle favourite", error);
     }
   };
-
-  // Calculate random cooking time (15-60 mins) and servings (2-6)
-  const cookingTime = Math.floor(Math.random() * 45) + 15;
-  const servings = Math.floor(Math.random() * 4) + 2;
+ 
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 mt-20">
@@ -70,7 +70,7 @@ function RecipeHeader({ meal, user }) {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-sm hover:bg-[#FF7F50] hover:text-white transition-colors"
-                onClick={() => console.log('Favourite clicked')}
+                onClick={toggleFavourite}
               >
                 <FiHeart className="w-5 h-5 text-[#E07A5F]" />
               </motion.button>
@@ -104,16 +104,6 @@ function RecipeHeader({ meal, user }) {
             </div>
 
             <div className="mt-auto">
-              <div className="flex flex-wrap gap-4 mb-6">
-                <div className="flex items-center text-[#5C2C1E]">
-                  <FiClock className="mr-2 text-[#E07A5F]" />
-                  <span>{cookingTime} mins</span>
-                </div>
-                <div className="flex items-center text-[#5C2C1E]">
-                  <FiUsers className="mr-2 text-[#E07A5F]" />
-                  <span>{servings} servings</span>
-                </div>
-              </div>
 
               <div className="flex flex-wrap gap-4">
                 <motion.button
