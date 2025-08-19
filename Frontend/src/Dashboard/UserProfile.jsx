@@ -39,6 +39,9 @@ function UserProfile() {
               <a href="/UserDashboard" className="block px-4 py-2 hover:bg-[#FFF2E2] text-sm text-[#5C2C1E]">
                 Profile
               </a>
+              <a href="/favourite" className="block px-4 py-2 hover:bg-[#FFF2E2] text-sm text-[#5C2C1E]">
+                Favourites
+              </a>
               <button
                 className="block w-full text-left px-4 py-2 hover:bg-[#FFF2E2] text-sm text-[#5C2C1E]"
                 onClick={async () => {
@@ -86,6 +89,9 @@ function UserProfile() {
               </div>
               <a href="/UserDashboard" className="block px-4 py-2 hover:bg-[#FFF2E2] text-sm text-[#5C2C1E]">
                 Profile
+              </a>
+              <a href="/favourite" className="block px-4 py-2 hover:bg-[#FFF2E2] text-sm text-[#5C2C1E]">
+                Favourites
               </a>
               <button
                 className="block w-full text-left px-4 py-2 hover:bg-[#FFF2E2] text-sm text-[#5C2C1E]"

@@ -25,9 +25,24 @@ function Favourite() {
         if (res.data.success && Array.isArray(res.data.data)) {
           const recipeIds = res.data.data;
           const recipePromises = recipeIds.map(async (id) => {
-            const data = await getMealById(id);
-            return data.meals ? data.meals[0] : null;
+            try {
+              // Try MealDB first
+              const mealData = await getMealById(id);
+              if (mealData?.meals?.[0]) {
+                return { ...mealData.meals[0], source: 'mealdb' };
+              } 
+              // Fallback: try user-added recipe
+              const userMealData = await axiosInstance.get(`/recipes/${id}`);
+              if (userMealData?.data?.data) {
+                return { ...userMealData.data.data, source: 'user' };
+              }
+              return null;
+            } catch (err) {
+              console.error(`Error fetching recipe ID ${id}:`, err);
+              return null;
+            }
           });
+
           const recipes = await Promise.all(recipePromises);
           const validRecipes = recipes.filter(Boolean);
           setFavourites(validRecipes);
@@ -62,8 +77,8 @@ function Favourite() {
 
   const removeFromFavorites = (mealId, meal) => {
     // Optimistic UI update
-    setFavourites(prev => prev.filter(m => m.idMeal !== mealId));
-    setFilteredFavourites(prev => prev.filter(m => m.idMeal !== mealId));
+    setFavourites(prev => prev.filter(m => (m.idMeal || m._id) !== mealId));
+    setFilteredFavourites(prev => prev.filter(m => (m.idMeal || m._id) !== mealId));
 
     // Show undo toast
     const toastId = toast(
@@ -301,28 +316,31 @@ function Favourite() {
       ) : (
         <AnimatePresence>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {filteredFavourites.map((meal) => (
-              <motion.div
-                key={meal.idMeal}
-                layout
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                className="relative group h-full min-h-[320px] flex"
-              >
-                <Card meal={meal} />
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => removeFromFavorites(meal.idMeal, meal)}
-                  className="absolute top-4 right-4 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-red-50 text-red-500 z-10 transition-all"
-                  aria-label="Remove from favorites"
+            {filteredFavourites.map((meal) => {
+              const mealKey = meal.idMeal || meal._id;
+              return (
+                <motion.div
+                  key={mealKey}
+                  layout
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  className="relative group h-full min-h-[320px] flex"
                 >
-                  <FiHeart className="w-5 h-5 fill-current" />
-                </motion.button>
-              </motion.div>
-            ))}
+                  <Card meal={meal} />
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => removeFromFavorites(mealKey, meal)}
+                    className="absolute top-4 right-4 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-red-50 text-red-500 z-10 transition-all"
+                    aria-label="Remove from favorites"
+                  >
+                    <FiHeart className="w-5 h-5 fill-current" />
+                  </motion.button>
+                </motion.div>
+              );
+            })}
           </div>
         </AnimatePresence>
       )}

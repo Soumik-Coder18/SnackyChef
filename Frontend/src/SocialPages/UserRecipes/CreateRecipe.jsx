@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { FiUpload, FiPlus, FiTrash2, FiX, FiClock } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
+import { createRecipe } from "../../api/axiosCreateRecipe";
+import { toast } from "react-toastify";
 
 function CreateRecipe() {
   const [formData, setFormData] = useState({
@@ -96,23 +98,41 @@ function CreateRecipe() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Combine steps into single instructions string
     const combinedInstructions = formData.instructions
       .map((inst, i) => {
         const timeText = inst.timeValue ? ` (Time: ${inst.timeValue} ${inst.timeUnit})` : '';
         return `Step ${i + 1}: ${inst.step}${timeText}`;
       })
       .join('\n\n');
-  
+
     const finalData = {
       ...formData,
       strInstructions: combinedInstructions
     };
-  
-    console.log('Recipe Submitted:', finalData);
-    // TODO: Send this to backend or local storage
+
+    try {
+      const res = await createRecipe(finalData);
+      toast.success("Recipe created successfully!");
+      console.log("Recipe Created:", res);
+      setFormData({
+        strMeal: '',
+        strCategory: '',
+        strArea: '',
+        strInstructions: '',
+        instructions: [{ step: '', timeValue: '', timeUnit: 'mins' }],
+        strMealThumb: '',
+        strYoutube: '',
+        strTags: '',
+        ingredients: [{ ingredient: '', measure: '' }],
+      });
+      setImagePreview(null);
+      setActiveTab('link');
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Failed to create recipe");
+    }
   };
 
   return (
