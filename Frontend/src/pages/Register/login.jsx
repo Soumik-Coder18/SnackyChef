@@ -54,7 +54,7 @@ const Login = () => {
       setIsSubmitting(true);
       try {
         const response = await axiosInstance.post('/login', formData);
-        console.log("Login response:", response.data); // Debugging line
+        // console.log("Login response:", response.data); // Debugging line
         const accessToken = response?.data?.data?.accessToken;
         if (accessToken) {
           localStorage.setItem('accessToken', accessToken);
@@ -63,6 +63,9 @@ const Login = () => {
           try {
             const profileRes = await axiosInstance.get('/profile');
             setUser(profileRes.data.data);
+            if (profileRes.data.data) {
+              localStorage.setItem('userId', profileRes.data.data._id);
+            }
           } catch (err) {
             setUser(null);
           }

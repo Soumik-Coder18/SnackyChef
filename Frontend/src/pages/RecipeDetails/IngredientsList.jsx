@@ -13,24 +13,46 @@ function IngredientsList({ meal }) {
 
   // Parse ingredients on component mount
   useEffect(() => {
+    if (!meal || typeof meal !== 'object') {
+      console.warn("IngredientsList: meal prop must be an object", meal);
+      setIngredients([]);
+      setOriginalQuantities({});
+      return;
+    }
+
     const parsedIngredients = [];
     const quantities = {};
-    
-    for (let i = 1; i <= 20; i++) {
-      const ingredient = meal[`strIngredient${i}`];
-      const measure = meal[`strMeasure${i}`];
-      if (ingredient && ingredient.trim() !== '') {
-        const id = `${i}-${ingredient}`;
+
+    if (meal.ingredients && Array.isArray(meal.ingredients) && meal.ingredients.length > 0) {
+      // User-added recipe from backend
+      meal.ingredients.forEach((ing, index) => {
+        const id = `${index}-${ing.ingredient}`;
         parsedIngredients.push({
           id,
-          name: ingredient,
-          originalMeasure: measure || '',
-          currentMeasure: measure || ''
+          name: ing.ingredient,
+          originalMeasure: ing.measure || '',
+          currentMeasure: ing.measure || ''
         });
-        quantities[id] = measure || '';
+        quantities[id] = ing.measure || '';
+      });
+    } else {
+      // MealDB recipe
+      for (let i = 1; i <= 20; i++) {
+        const ingredient = meal[`strIngredient${i}`];
+        const measure = meal[`strMeasure${i}`];
+        if (ingredient && ingredient.trim() !== '') {
+          const id = `${i}-${ingredient}`;
+          parsedIngredients.push({
+            id,
+            name: ingredient,
+            originalMeasure: measure || '',
+            currentMeasure: measure || ''
+          });
+          quantities[id] = measure || '';
+        }
       }
     }
-    
+
     setIngredients(parsedIngredients);
     setOriginalQuantities(quantities);
   }, [meal]);

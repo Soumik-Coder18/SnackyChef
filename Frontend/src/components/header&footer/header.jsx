@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { FiMenu, FiX, FiSearch } from 'react-icons/fi';
+import { AuthContext } from '../../context/AuthContext';
 
 function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -73,8 +75,12 @@ function Header() {
           <ul className="flex gap-8 list-none text-base font-medium">
             <li><a href="/" className="hover:text-[#FF7F50] transition-colors">Home</a></li>
             <li><a href="/recipe" className="hover:text-[#FF7F50] transition-colors">Recipes</a></li>
-            <li><a href="/favourite" className="hover:text-[#FF7F50] transition-colors">Favourites</a></li>
-            <li><a href="/about" className="hover:text-[#FF7F50] transition-colors">About</a></li>
+            <li><a href="/recipe-world" className="hover:text-[#FF7F50] transition-colors">Recipe World</a></li>
+            {user ? (
+              <li><a href="/my-recipes" className="hover:text-[#FF7F50] transition-colors">My Recipes</a></li>
+            ) : (
+              <li><a href="/about" className="hover:text-[#FF7F50] transition-colors">About</a></li>
+            )}
           </ul>
         </nav>
         
@@ -116,8 +122,12 @@ function Header() {
           <ul className="flex flex-col gap-4 text-base font-medium">
             <li><a href="/" onClick={() => setMobileMenuOpen(false)} className="block py-2 hover:text-[#FF7F50] transition-colors">Home</a></li>
             <li><a href="/recipes" onClick={() => setMobileMenuOpen(false)} className="block py-2 hover:text-[#FF7F50] transition-colors">Recipes</a></li>
-            <li><a href="/favourite" onClick={() => setMobileMenuOpen(false)} className="block py-2 hover:text-[#FF7F50] transition-colors">Favourites</a></li>
-            <li><a href="/about" onClick={() => setMobileMenuOpen(false)} className="block py-2 hover:text-[#FF7F50] transition-colors">About</a></li>
+            <li><a href="/recipe-world" onClick={() => setMobileMenuOpen(false)} className="block py-2 hover:text-[#FF7F50] transition-colors">Recipe World</a></li>
+            {user ? (
+              <li><a href="/my-recipes" onClick={() => setMobileMenuOpen(false)} className="block py-2 hover:text-[#FF7F50] transition-colors">My Recipes</a></li>
+            ) : (
+              <li><a href="/about" onClick={() => setMobileMenuOpen(false)} className="block py-2 hover:text-[#FF7F50] transition-colors">About</a></li>
+            )}
           </ul>
         </div>
       )}

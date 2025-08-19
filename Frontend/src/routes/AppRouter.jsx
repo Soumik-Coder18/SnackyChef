@@ -19,6 +19,7 @@ import HowItWorks from '../pages/Contact/HowItWorks';
 import RecipeDetails from '../pages/RecipeDetails/MainRecipeDetails';
 import Favourite from '../pages/Favourites/Favourite';
 import CreateRecipe from '../SocialPages/UserRecipes/CreateRecipe';
+import MyRecipesList from '../SocialPages/MyRecipe/MyRecipesList';
 import UserDashboard from '../Dashboard/UserDashboard';
 import RecipeWorld from '../pages/RecipeWorld/RecipeWorld';
 
@@ -63,6 +64,11 @@ function AppRouter() {
       <Route path="/UserDashboard" element={
         <ProtectedRoute>
           <UserDashboard />
+        </ProtectedRoute>
+      } />
+      <Route path="/my-recipes" element={
+        <ProtectedRoute>
+          <MyRecipesList />
         </ProtectedRoute>
       } />
     </Routes>

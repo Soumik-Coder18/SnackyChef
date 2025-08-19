@@ -1,67 +1,3 @@
-// import React, { useState, useEffect } from 'react';
-// import { searchByName } from '../../api/mealdb';
-// import Filter from './RecipeComponent/Filter';
-// import Pagination from './RecipeComponent/Pagination';
-// import FeaturedRecipe from './FeaturedRecipe';
-// import AllRecipes from './AllRecipes';
-// import QuickRecipe from './QuickRecipe';
-// import FilterResult from './RecipeComponent/FilterResult';
-
-// function MainRecipePage() {
-//   const [filteredMeals, setFilteredMeals] = useState([]);
-//   const [isFilterActive, setIsFilterActive] = useState(false);
-//   const [allMeals, setAllMeals] = useState([]);
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const mealsPerPage = 9;
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       const data = await searchByName('');
-//       if (data.meals) setAllMeals(data.meals);
-//     };
-//     fetchData();
-//   }, []);
-
-//   const handleFilterApply = (meals, activeFilter) => {
-//     setFilteredMeals(meals);
-//     setIsFilterActive(!!activeFilter);
-//   };
-
-//   const indexOfLastMeal = currentPage * mealsPerPage;
-//   const indexOfFirstMeal = indexOfLastMeal - mealsPerPage;
-//   const currentMeals = allMeals.slice(indexOfFirstMeal, indexOfLastMeal);
-
-//   return (
-//     <div className="space-y-12">
-//       <div className="text-center">
-//         <h1 className="text-4xl md:text-5xl font-bold text-[#5C2C1E] mb-4">
-//           <span className="relative inline-block pt-35 pb-2">
-//             Recipes
-//             <span className="absolute bottom-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#E07A5F] to-[#FF9E5E] rounded-full"></span>
-//           </span>
-//         </h1>
-//       </div>
-//       <Filter onApply={handleFilterApply} />
-//       {isFilterActive ? (
-//         <FilterResult meals={filteredMeals} />
-//       ) : (
-//         <>
-//           <FeaturedRecipe meals={currentMeals} />
-//           <AllRecipes meals={currentMeals} />
-//           <QuickRecipe meals={currentMeals} />
-//           <Pagination
-//             currentPage={currentPage}
-//             totalPages={Math.ceil(allMeals.length / mealsPerPage)}
-//             onPageChange={setCurrentPage}
-//           />
-//         </>
-//       )}
-//     </div>
-//   );
-// }
-
-// export default MainRecipePage;
-
 import React, { useState, useEffect } from 'react';
 import { searchByName } from '../../api/mealdb';
 import Filter from './RecipeComponent/Filter';
@@ -72,11 +8,15 @@ import QuickRecipe from './QuickRecipe';
 import FilterResult from './RecipeComponent/FilterResult';
 import { motion } from 'framer-motion';
 import Loader from '../../components/Loader';
+import { getAllRecipes } from '../../api/axiosCreateRecipe';
+import Card from '../../components/Card';
+import UserAdded from './UserAdded';
 
 function MainRecipePage() {
   const [filteredMeals, setFilteredMeals] = useState([]);
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [allMeals, setAllMeals] = useState([]);
+  const [userRecipes, setUserRecipes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const mealsPerPage = 9;
@@ -87,6 +27,8 @@ function MainRecipePage() {
       try {
         const data = await searchByName('');
         if (data.meals) setAllMeals(data.meals);
+        const userData = await getAllRecipes();
+        if (userData?.data) setUserRecipes(userData.data);
       } finally {
         setLoading(false);
       }
@@ -159,6 +101,8 @@ function MainRecipePage() {
             <AllRecipes meals={currentMeals} />
             <QuickRecipe meals={currentMeals} />
             
+            <UserAdded />
+
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}

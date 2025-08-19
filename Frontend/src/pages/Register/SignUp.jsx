@@ -64,7 +64,7 @@ const SignUp = () => {
           email: formData.email,
           password: formData.password
         });
-        console.log('Signup success:', response.data);
+        // console.log('Signup success:', response.data);
         toast.success(response.data.message || 'Signup successful! Please verify your email.');
         navigate('/otp', { state: { userId: response.data.data.userId } });
         // optionally redirect or notify user to check email for OTP

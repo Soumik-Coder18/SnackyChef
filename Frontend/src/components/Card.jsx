@@ -3,6 +3,21 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 function Card({ meal }) {
+  const normalizedMeal = meal
+    ? {
+        ...meal,
+        idMeal: meal.idMeal || meal._id,
+        strTags:
+          Array.isArray(meal.strTags)
+            ? meal.strTags
+            : typeof meal.strTags === 'string'
+            ? meal.strTags
+            : [],
+        strInstructions: meal.strInstructions || ''
+      }
+    : null;
+  if (!normalizedMeal) return null;
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -13,12 +28,12 @@ function Card({ meal }) {
     >
       <div className="relative overflow-hidden h-48">
         <img
-          src={meal.strMealThumb}
-          alt={meal.strMeal}
+          src={normalizedMeal.strMealThumb}
+          alt={normalizedMeal.strMeal}
           className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
         />
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-          <h3 className="text-lg font-bold text-white line-clamp-1">{meal.strMeal}</h3>
+          <h3 className="text-lg font-bold text-white line-clamp-1">{normalizedMeal.strMeal}</h3>
         </div>
       </div>
 
@@ -26,36 +41,38 @@ function Card({ meal }) {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <span className="bg-[#FF7F50]/10 text-[#E07A5F] text-xs px-2.5 py-1 rounded-full">
-              {meal.strCategory}
+              {normalizedMeal.strCategory}
             </span>
             <span className="bg-[#FFD6A5]/30 text-[#5C2C1E] text-xs px-2.5 py-1 rounded-full">
-              {meal.strArea}
+              {normalizedMeal.strArea}
             </span>
           </div>
 
-          {meal.strTags && (
+          {(Array.isArray(normalizedMeal.strTags) || typeof normalizedMeal.strTags === 'string') && (
             <div className="flex flex-wrap gap-1.5 mb-3">
-              {meal.strTags.split(',').slice(0, 3).map(tag => (
-                <span
-                  key={tag}
-                  className="bg-[#FFD6A5]/50 text-[#5C2C1E] text-xs px-2 py-1 rounded-full"
-                >
-                  #{tag.trim()}
-                </span>
-              ))}
+              {(Array.isArray(normalizedMeal.strTags) ? normalizedMeal.strTags : normalizedMeal.strTags.split(','))
+                .slice(0, 3)
+                .map(tag => (
+                  <span
+                    key={tag}
+                    className="bg-[#FFD6A5]/50 text-[#5C2C1E] text-xs px-2 py-1 rounded-full"
+                  >
+                    #{tag.trim()}
+                  </span>
+                ))}
             </div>
           )}
 
-          {meal.strInstructions && (
+          {normalizedMeal.strInstructions && (
             <p className="text-sm text-gray-600 line-clamp-3 mb-4">
-              {meal.strInstructions}
+              {normalizedMeal.strInstructions}
             </p>
           )}
         </div>
 
         <div className="flex justify-between items-center">
           <Link
-            to={`/recipe/${meal.idMeal}`}
+            to={`/recipe/${normalizedMeal.idMeal}`}
             className="px-4 py-2 bg-[#FF7F50] text-white text-sm rounded-lg hover:bg-[#E07A5F] transition-colors flex items-center gap-1"
           >
             View Recipe

@@ -17,9 +17,24 @@ const storage = new CloudinaryStorage({
     folder: "avatars",
     allowed_formats: ["jpg", "jpeg", "png"],
     transformation: [{ width: 300, height: 300, crop: "limit" }],
+    quality: "auto",
+    fetch_format: "auto",
   },
 });
 
-const upload = multer({ storage });
+const recipeImageStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "recipes",
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    transformation: [{ width: 800, height: 800, crop: "limit" }],
+    quality: "auto",
+    fetch_format: "auto",
+  },
+});
+
+const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
+
+export const uploadRecipeImage = multer({ storage: recipeImageStorage, limits: { fileSize: 10 * 1024 * 1024 } });
 
 export default upload;
