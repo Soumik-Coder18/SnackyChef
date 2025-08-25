@@ -4,7 +4,8 @@ import {
   getAllRecipes,
   getRecipeById,
   deleteRecipe,
-  updateRecipe
+  updateRecipe,
+  getMyRecipes
 } from "../controllers/recipeController.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 import { uploadRecipeImage } from "../middlewares/multerMiddleware.js";
@@ -13,6 +14,7 @@ const router = express.Router();
 
 // Public routes
 router.get("/", getAllRecipes);
+router.get("/my-recipes", authMiddleware, getMyRecipes);
 router.get("/:id", getRecipeById);
 
 // Private routes
