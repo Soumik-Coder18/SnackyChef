@@ -74,6 +74,22 @@ export const getAllRecipes = async (req, res, next) => {
 };
 
 /**
+ * @desc    Get recipes created by the logged-in user
+ * @route   GET /api/v1/recipes/my-recipes
+ * @access  Private
+ */
+export const getMyRecipes = async (req, res, next) => {
+  try {
+    const recipes = await Recipe.find({ createdBy: req.user.id }).populate("createdBy", "username name");
+    return res
+      .status(200)
+      .json(new apiResponse(200, recipes, "My recipes fetched successfully"));
+  } catch (err) {
+    next(new apiError(500, err.message || "Failed to fetch my recipes"));
+  }
+};
+
+/**
  * @desc    Get single recipe by ID
  * @route   GET /api/v1/recipes/:id
  * @access  Public

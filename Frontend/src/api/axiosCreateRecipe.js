@@ -45,10 +45,17 @@ export const deleteRecipe = async (id) => {
   return res.data;
 };
 
+// Get recipes created by the current user
+export const getMyRecipes = async () => {
+  const res = await axiosRecipeInstance.get("/my-recipes");
+  return res.data;
+};
+
 export default {
   axiosRecipeInstance,
   createRecipe,
   getAllRecipes,
   getRecipeById,
-  deleteRecipe
+  deleteRecipe,
+  getMyRecipes
 };

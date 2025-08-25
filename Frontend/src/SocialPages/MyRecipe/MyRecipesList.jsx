@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getAllRecipes } from "../../api/axiosCreateRecipe";
+import { getMyRecipes } from "../../api/axiosCreateRecipe";
 import MyRecipeCard from "./MyRecipeCard";
 import Loader from "../../components/Loader";
 
@@ -9,28 +9,7 @@ const MyRecipesList = () => {
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  const getUserId = () => {
-    try {
-      const userString = localStorage.getItem("user");
-      if (userString) {
-        const userObj = JSON.parse(userString);
-        return userObj?._id;
-      }
-    } catch (e) {
-      console.error("Failed to parse user from localStorage", e);
-    }
-    return undefined;
-  };
-
   const fetchRecipes = async (isRefresh = false) => {
-    const userId = getUserId();
-    
-    if (!userId) {
-      setMyRecipes([]);
-      setLoading(false);
-      return;
-    }
-
     try {
       if (isRefresh) {
         setRefreshing(true);
@@ -38,8 +17,8 @@ const MyRecipesList = () => {
         setLoading(true);
       }
       setError(null);
-      const allRecipes = await getAllRecipes(`?userId=${userId}`);
-      setMyRecipes(allRecipes.data);
+      const res = await getMyRecipes();
+      setMyRecipes(res.data);
     } catch (error) {
       console.error("Failed to fetch recipes", error);
       setError("Failed to load your recipes. Please try again later.");
@@ -173,7 +152,10 @@ const MyRecipesList = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {myRecipes.map(recipe => (
                 <div key={recipe._id} className="flex justify-center w-full">
-                  <MyRecipeCard recipe={recipe} />
+                  <MyRecipeCard 
+                    recipe={recipe} 
+                    onDelete={(deletedId) => setMyRecipes(prev => prev.filter(r => r._id !== deletedId))}
+                  />
                 </div>
               ))}
             </div>
